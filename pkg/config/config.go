@@ -7,6 +7,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
+// Load config
 func MustLoad[T any](modifyCfg func(*T)) *T {
 	configPath := fetchConfigPath()
 	if configPath == "" {
@@ -16,6 +17,7 @@ func MustLoad[T any](modifyCfg func(*T)) *T {
 	return MustLoadPath(configPath, modifyCfg)
 }
 
+// Load config file by path
 func MustLoadPath[T any](configPath string, modifyCfg func(*T)) *T {
 	// check if file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -32,6 +34,9 @@ func MustLoadPath[T any](configPath string, modifyCfg func(*T)) *T {
 
 	return &cfg
 }
+
+// Placeholder for MustLoad
+func NoModyfing[T any](_ *T) {}
 
 func fetchConfigPath() string {
 	var res string

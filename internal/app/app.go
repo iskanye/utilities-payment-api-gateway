@@ -1,9 +1,12 @@
 package app
 
 import (
-	"net/http"
+	"log/slog"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
+	grpcAuth "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
+	authHandlers "github.com/iskanye/utilities-payment-api-gateway/internal/handlers/auth"
 )
 
 type App struct {
@@ -12,12 +15,20 @@ type App struct {
 
 func New(
 	engine *gin.Engine,
+	log *slog.Logger,
+	cfg *config.Config,
 ) *App {
-	engine.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	auth, err := grpcAuth.New(cfg.Auth.Host, cfg.Auth.Port)
+	if err != nil {
+		panic(err)
+	}
+
+	login := authHandlers.LoginHandler(&auth, log)
+	register := authHandlers.RegisterHandler(&auth, log)
+
+	engine.GET("/login", login)
+	engine.GET("/register", register)
+
 	return &App{e: engine}
 }
 
