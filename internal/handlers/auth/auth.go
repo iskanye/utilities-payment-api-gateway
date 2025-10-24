@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
-	"github.com/iskanye/utilities-payment-api-gateway/pkg/logger"
+	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
 func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {

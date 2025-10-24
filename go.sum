@@ -15,8 +15,6 @@ github.com/gabriel-vasile/mimetype v1.4.8 h1:FfZ3gj38NjllZIeJAmMhr+qKL8Wu+nOoI3G
 github.com/gabriel-vasile/mimetype v1.4.8/go.mod h1:ByKUIKGjh1ODkGM1asKUbQZOLGrPjydw3hYPU2YU9t8=
 github.com/gin-contrib/sse v1.1.0 h1:n0w2GMuUpWDVp7qSpvze6fAu9iRxJY4Hmj6AmBOU05w=
 github.com/gin-contrib/sse v1.1.0/go.mod h1:hxRZ5gVpWMT7Z0B0gSNYqqsSCNIJMjzvm6fqCz9vjwM=
-github.com/gin-gonic/autotls v1.2.1 h1:mTIiQ6hX0ZFf5aHjmEyKtj2fSlXS+XH0uzFAxlhfYNA=
-github.com/gin-gonic/autotls v1.2.1/go.mod h1:y5Tp8Fle9NkOonU7DvxFTbG/qwnQimw0257RNq15Zls=
 github.com/gin-gonic/gin v1.11.0 h1:OW/6PLjyusp2PPXtyxKHU0RbX6I/l28FTdDlae5ueWk=
 github.com/gin-gonic/gin v1.11.0/go.mod h1:+iq/FyxlGzII0KHiBGjuNn4UNENUlKbGlNmc+W50Dls=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
@@ -44,6 +42,8 @@ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/ilyakaznacheev/cleanenv v1.5.0 h1:0VNZXggJE2OYdXE87bfSSwGxeiGt9moSR2lOrsHHvr4=
 github.com/ilyakaznacheev/cleanenv v1.5.0/go.mod h1:a5aDzaJrLCQZsazHol1w8InnDcOX0OColm64SlIi6gk=
+github.com/iskanye/utilities-payment v0.0.0-20251024110023-2de376bad4fb h1:VNYlAgDnhEjR8M6gF9/6K/hrQQBNn/BK2yNiy04bL6Q=
+github.com/iskanye/utilities-payment v0.0.0-20251024110023-2de376bad4fb/go.mod h1:uvcQON/sQqH3EEUUbDDprKItbqhFzk2dJgSMjn5SEag=
 github.com/iskanye/utilities-payment-proto v0.0.0-20251023181841-7f811974ce7e h1:dEdV83V+TKZaYJbDns+m7vCMptzGSrnLYbzgSVTh3zY=
 github.com/iskanye/utilities-payment-proto v0.0.0-20251023181841-7f811974ce7e/go.mod h1:XqbqgqoMHARdS2/Vc76BijbWF/e89PgGO2FBv8uJl8A=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=

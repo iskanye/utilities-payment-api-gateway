@@ -3,10 +3,8 @@ module github.com/iskanye/utilities-payment-api-gateway
 go 1.25.3
 
 require (
-	github.com/fatih/color v1.18.0
-	github.com/gin-gonic/autotls v1.2.1
 	github.com/gin-gonic/gin v1.11.0
-	github.com/ilyakaznacheev/cleanenv v1.5.0
+	github.com/iskanye/utilities-payment v0.0.0-20251024110023-2de376bad4fb
 	github.com/iskanye/utilities-payment-proto v0.0.0-20251023181841-7f811974ce7e
 	google.golang.org/grpc v1.76.0
 )
@@ -16,6 +14,7 @@ require (
 	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
+	github.com/fatih/color v1.18.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -23,6 +22,7 @@ require (
 	github.com/go-playground/validator/v10 v10.27.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
+	github.com/ilyakaznacheev/cleanenv v1.5.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
