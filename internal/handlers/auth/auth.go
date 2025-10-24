@@ -38,7 +38,7 @@ func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 
 		c.JSON(http.StatusOK, map[string]string{
 			"token": token,
-			"err":   "nil",
+			"err":   "null",
 		})
 	}
 }

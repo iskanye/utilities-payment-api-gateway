@@ -2,6 +2,8 @@ package app
 
 import (
 	"log/slog"
+	"net"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
@@ -10,7 +12,8 @@ import (
 )
 
 type App struct {
-	e *gin.Engine
+	e   *gin.Engine
+	cfg *config.Config
 }
 
 func New(
@@ -29,11 +32,14 @@ func New(
 	engine.GET("/login", login)
 	engine.GET("/register", register)
 
-	return &App{e: engine}
+	return &App{
+		e:   engine,
+		cfg: cfg,
+	}
 }
 
 func (a *App) MustRun() {
-	if err := a.e.Run(); err != nil {
+	if err := a.e.Run(net.JoinHostPort(a.cfg.Host, strconv.Itoa(a.cfg.Port))); err != nil {
 		panic(err)
 	}
 }
