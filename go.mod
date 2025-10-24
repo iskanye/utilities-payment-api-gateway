@@ -5,7 +5,7 @@ go 1.25.3
 require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/iskanye/utilities-payment v0.0.0-20251024110023-2de376bad4fb
-	github.com/iskanye/utilities-payment-proto v0.0.0-20251023181841-7f811974ce7e
+	github.com/iskanye/utilities-payment-proto v0.0.0-20251024131628-0b998cdfaa3a
 	google.golang.org/grpc v1.76.0
 )
 

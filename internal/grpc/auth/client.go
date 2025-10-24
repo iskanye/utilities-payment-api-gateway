@@ -27,6 +27,10 @@ type Auth interface {
 		email string,
 		password string,
 	) (userID int64, err error)
+	Validate(
+		ctx context.Context,
+		token string,
+	) (isValid bool, err error)
 }
 
 func New(
@@ -73,4 +77,18 @@ func (c *clientApi) Register(
 	}
 
 	return resp.GetUserId(), err
+}
+
+func (c *clientApi) Validate(
+	ctx context.Context,
+	token string,
+) (bool, error) {
+	resp, err := c.auth.Validate(ctx, &auth.ValidateRequest{
+		Token: token,
+	})
+	if err != nil {
+		return false, status.Error(codes.Internal, err.Error())
+	}
+
+	return resp.GetIsValid(), err
 }

@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
+func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
@@ -27,19 +28,15 @@ func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 		token, err := a.Login(c, email, password)
 		if err != nil {
 			log.Error("failed to login user", logger.Err(err))
-			c.JSON(http.StatusBadRequest, map[string]string{
-				"token": "",
-				"err":   err.Error(),
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
 			})
 			return
 		}
 
 		log.Info("success")
-
-		c.JSON(http.StatusOK, map[string]string{
-			"token": token,
-			"err":   "null",
-		})
+		c.SetCookie("token", token, 3600, "/", cfg.Host, false, true)
+		c.JSON(http.StatusOK, nil)
 	}
 }
 
@@ -61,7 +58,7 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 		id, err := a.Register(c, email, password)
 		if err != nil {
 			log.Error("failed to register user", logger.Err(err))
-			c.JSON(http.StatusBadRequest, map[string]any{
+			c.JSON(http.StatusBadRequest, gin.H{
 				"id":  0,
 				"err": err.Error(),
 			})
@@ -70,7 +67,7 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 
 		log.Info("success")
 
-		c.JSON(http.StatusOK, map[string]any{
+		c.JSON(http.StatusOK, gin.H{
 			"id":  id,
 			"err": "nil",
 		})

@@ -3,12 +3,14 @@ package app
 import (
 	"log/slog"
 	"net"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
 	grpcAuth "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	authHandlers "github.com/iskanye/utilities-payment-api-gateway/internal/handlers/auth"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/middlewares"
 )
 
 type App struct {
@@ -26,11 +28,24 @@ func New(
 		panic(err)
 	}
 
-	login := authHandlers.LoginHandler(&auth, log)
+	authMiddleware := middlewares.AuthMiddleware(&auth, log)
+
+	// AUTH SERVICE
+	login := authHandlers.LoginHandler(cfg, &auth, log)
 	register := authHandlers.RegisterHandler(&auth, log)
 
 	engine.GET("/login", login)
 	engine.GET("/register", register)
+
+	// Auth required
+	engine.Use(authMiddleware)
+	{
+		engine.GET("/bills", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{
+				"msg": "your bills here",
+			})
+		})
+	}
 
 	return &App{
 		e:   engine,
