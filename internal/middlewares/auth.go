@@ -35,6 +35,15 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 
 		if isValid {
 			log.Info("validated successfully")
+
+			userId, err := c.Cookie("user_id")
+			if err != nil {
+				log.Error("failed to get user id", logger.Err(err))
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}
+
+			log.Info("got user id", slog.String("user_id", userId))
 			c.Next()
 			return
 		}

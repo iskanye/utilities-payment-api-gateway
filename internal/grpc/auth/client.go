@@ -21,7 +21,7 @@ type Auth interface {
 		ctx context.Context,
 		email string,
 		password string,
-	) (token string, err error)
+	) (token string, userId int64, err error)
 	Register(
 		ctx context.Context,
 		email string,
@@ -51,16 +51,16 @@ func (c *clientApi) Login(
 	ctx context.Context,
 	email string,
 	password string,
-) (string, error) {
+) (string, int64, error) {
 	resp, err := c.auth.Login(ctx, &auth.LoginRequest{
 		Email:    email,
 		Password: password,
 	})
 	if err != nil {
-		return "", status.Error(codes.Internal, err.Error())
+		return "", 0, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetToken(), err
+	return resp.GetToken(), resp.GetUserId(), err
 }
 
 func (c *clientApi) Register(

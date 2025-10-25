@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -25,7 +26,7 @@ func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.C
 			slog.String("email", email),
 		)
 
-		token, err := a.Login(c, email, password)
+		token, userId, err := a.Login(c, email, password)
 		if err != nil {
 			log.Error("failed to login user", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -35,7 +36,8 @@ func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.C
 		}
 
 		log.Info("success")
-		c.SetCookie("token", token, 3600, "/", cfg.Host, false, true)
+		c.SetCookie("token", token, int(cfg.CookieTTL.Seconds()), "/", cfg.Host, false, true)
+		c.SetCookie("user_id", fmt.Sprint(userId), int(cfg.CookieTTL.Seconds()), "/", cfg.Host, false, true)
 		c.JSON(http.StatusOK, nil)
 	}
 }
