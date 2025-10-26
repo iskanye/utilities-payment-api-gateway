@@ -11,3 +11,14 @@ tasks:
     desc: "Start api-gateway service"
     cmds:
       - go run ./cmd/api-gateway --config=./config/dev.yaml
+
+  docker-build:
+    aliases:
+      - build
+    cmds:
+      - docker build -t api-gateway:dev . 
+  docker-run:
+    aliases:
+      - run
+    cmds:
+      - docker run -p 8080:8080 api-gateway:dev 
