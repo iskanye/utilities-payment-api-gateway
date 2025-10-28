@@ -26,6 +26,13 @@ func AddBillHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
 
 		amount, err := strconv.Atoi(amountStr)
 		if err != nil {
+			if amountStr == "" {
+				log.Error("amount required", logger.Err(err))
+				c.JSON(http.StatusBadRequest, gin.H{
+					"err": err.Error(),
+				})
+				return
+			}
 			log.Error("cant convert amount to int", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"err": err.Error(),
@@ -45,6 +52,35 @@ func AddBillHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
 		log.Info("success")
 		c.JSON(http.StatusOK, gin.H{
 			"id": billId,
+		})
+	}
+}
+
+func GetBillsHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
+	return func(c *gin.Context) {
+		const op = "Billing.GetBills"
+
+		address := c.Query("address")
+
+		log := log.With(
+			slog.String("op", op),
+			slog.String("address", address),
+		)
+
+		log.Info("attempting to get bills")
+
+		bills, err := b.GetBills(c, address)
+		if err != nil {
+			log.Error("failed to get bills", logger.Err(err))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
+			return
+		}
+
+		log.Info("success")
+		c.JSON(http.StatusOK, gin.H{
+			"bills": bills,
 		})
 	}
 }

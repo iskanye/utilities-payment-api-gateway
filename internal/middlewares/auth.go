@@ -22,14 +22,18 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 		token, err := c.Cookie("token")
 		if err != nil {
 			log.Error("failed to get user token", logger.Err(err))
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"err": err.Error(),
+			})
 			return
 		}
 
 		isValid, err := a.Validate(c, token)
 		if err != nil {
 			log.Error("failed to validate user", logger.Err(err))
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"err": err.Error(),
+			})
 			return
 		}
 
@@ -39,7 +43,9 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 			userId, err := c.Cookie("user_id")
 			if err != nil {
 				log.Error("failed to get user id", logger.Err(err))
-				c.AbortWithStatus(http.StatusUnauthorized)
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"err": err.Error(),
+				})
 				return
 			}
 
@@ -49,6 +55,8 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 		}
 
 		log.Error("invalid token")
-		c.Abort()
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"err": "invalid token",
+		})
 	}
 }

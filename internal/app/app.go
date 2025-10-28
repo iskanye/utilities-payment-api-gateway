@@ -37,19 +37,21 @@ func New(
 	authMiddleware := middlewares.AuthMiddleware(&auth, log)
 
 	// AUTH SERVICE
-	login := authHandlers.LoginHandler(cfg, &auth, log)
+	login := authHandlers.LoginHandler(&auth, log, int(cfg.CookieTTL.Seconds()), cfg.Host)
 	register := authHandlers.RegisterHandler(&auth, log)
 
 	// BILLING SERVICE
 	addBill := billingHandlers.AddBillHandler(&billing, log)
+	getBills := billingHandlers.GetBillsHandler(&billing, log)
 
 	engine.GET("/login", login)
 	engine.GET("/register", register)
 
 	// Auth required
-	engine.Use(authMiddleware)
+	r := engine.Use(authMiddleware)
 	{
-		engine.GET("/addbill", addBill)
+		r.GET("/addbill", addBill)
+		r.GET("/getbills", getBills)
 	}
 
 	return &App{

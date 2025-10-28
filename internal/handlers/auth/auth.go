@@ -6,12 +6,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.Context) {
+func LoginHandler(a auth.Auth, log *slog.Logger, cookieTTL int, host string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
@@ -35,8 +34,8 @@ func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.C
 		}
 
 		log.Info("success")
-		c.SetCookie("token", token, int(cfg.CookieTTL.Seconds()), "/", cfg.Host, false, true)
-		c.SetCookie("user_id", fmt.Sprint(userId), int(cfg.CookieTTL.Seconds()), "/", cfg.Host, false, true)
+		c.SetCookie("token", token, cookieTTL, "/", host, false, true)
+		c.SetCookie("user_id", fmt.Sprint(userId), cookieTTL, "/", host, false, true)
 		c.JSON(http.StatusOK, nil)
 	}
 }
