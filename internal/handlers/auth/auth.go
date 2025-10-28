@@ -15,16 +15,15 @@ func LoginHandler(cfg *config.Config, a auth.Auth, log *slog.Logger) func(*gin.C
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
-		log := log.With(
-			slog.String("op", op),
-		)
-
 		email := c.Query("email")
 		password := c.Query("password")
 
-		log.Info("attempting to login user",
+		log := log.With(
+			slog.String("op", op),
 			slog.String("email", email),
 		)
+
+		log.Info("attempting to login user")
 
 		token, userId, err := a.Login(c, email, password)
 		if err != nil {
@@ -46,22 +45,20 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Auth.Register"
 
-		log := log.With(
-			slog.String("op", op),
-		)
-
 		email := c.Query("email")
 		password := c.Query("password")
 
-		log.Info("attempting to register user",
+		log := log.With(
+			slog.String("op", op),
 			slog.String("email", email),
 		)
+
+		log.Info("attempting to register user")
 
 		id, err := a.Register(c, email, password)
 		if err != nil {
 			log.Error("failed to register user", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
-				"id":  0,
 				"err": err.Error(),
 			})
 			return
@@ -70,8 +67,7 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 		log.Info("success")
 
 		c.JSON(http.StatusOK, gin.H{
-			"id":  id,
-			"err": "nil",
+			"id": id,
 		})
 	}
 }

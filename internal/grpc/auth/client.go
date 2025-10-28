@@ -60,7 +60,7 @@ func (c *clientApi) Login(
 		return "", 0, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetToken(), resp.GetUserId(), err
+	return resp.GetToken(), resp.GetUserId(), nil
 }
 
 func (c *clientApi) Register(
@@ -76,7 +76,7 @@ func (c *clientApi) Register(
 		return 0, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetUserId(), err
+	return resp.GetUserId(), nil
 }
 
 func (c *clientApi) Validate(
@@ -90,5 +90,5 @@ func (c *clientApi) Validate(
 		return false, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetIsValid(), err
+	return resp.GetIsValid(), nil
 }

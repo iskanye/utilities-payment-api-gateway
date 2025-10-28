@@ -7,6 +7,7 @@ type Config struct {
 	Port      int           `yaml:"port" env-default:"8080"`
 	CookieTTL time.Duration `yaml:"cookie_ttl" env-default:"1h"`
 	Auth      HostPort      `yaml:"auth"`
+	Billing   HostPort      `yaml:"billing"`
 }
 
 type HostPort struct {
