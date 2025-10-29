@@ -48,10 +48,10 @@ func New(
 	engine.GET("/register", register)
 
 	// Auth required
-	r := engine.Use(authMiddleware)
+	authorized := engine.Group("/", authMiddleware)
 	{
-		r.GET("/addbill", addBill)
-		r.GET("/getbills", getBills)
+		authorized.GET("/addbill", addBill)
+		authorized.GET("/getbills", getBills)
 	}
 
 	return &App{

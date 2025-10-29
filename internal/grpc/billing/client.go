@@ -24,10 +24,11 @@ type Billing interface {
 		ctx context.Context,
 		address string,
 		amount int,
+		userID int64,
 	) (billId int64, err error)
 	GetBills(
 		ctx context.Context,
-		address string,
+		userID int64,
 	) (bills []models.Bill, err error)
 }
 
@@ -49,10 +50,12 @@ func (c *clientApi) AddBill(
 	ctx context.Context,
 	address string,
 	amount int,
+	userID int64,
 ) (int64, error) {
 	resp, err := c.billing.AddBill(ctx, &billing.Bill{
 		Address: address,
 		Amount:  int32(amount),
+		UserId:  userID,
 	})
 	if err != nil {
 		return 0, status.Error(codes.Internal, err.Error())
@@ -63,10 +66,10 @@ func (c *clientApi) AddBill(
 
 func (c *clientApi) GetBills(
 	ctx context.Context,
-	address string,
+	userID int64,
 ) ([]models.Bill, error) {
 	resp, err := c.billing.GetBills(ctx, &billing.BillsRequest{
-		Address: address,
+		UserId: userID,
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -82,10 +85,13 @@ func (c *clientApi) GetBills(
 			}
 			break
 		}
+
 		bills = append(bills, models.Bill{
 			ID:      bill.GetBillId(),
 			Address: bill.GetAddress(),
 			Amount:  int(bill.GetAmount()),
+			UserID:  userID,
+			DueDate: *bill.DueDate,
 		})
 	}
 
