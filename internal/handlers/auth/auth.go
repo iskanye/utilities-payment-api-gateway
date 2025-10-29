@@ -44,8 +44,8 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Auth.Register"
 
-		email := c.Query("email")
-		password := c.Query("password")
+		email := c.PostForm("email")
+		password := c.PostForm("password")
 
 		log := log.With(
 			slog.String("op", op),

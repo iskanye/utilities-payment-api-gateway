@@ -44,14 +44,14 @@ func New(
 	addBill := billingHandlers.AddBillHandler(&billing, log)
 	getBills := billingHandlers.GetBillsHandler(&billing, log)
 
-	engine.GET("/login", login)
-	engine.GET("/register", register)
+	engine.GET("/user", login)
+	engine.POST("/user", register)
 
 	// Auth required
 	authorized := engine.Group("/", authMiddleware)
 	{
-		authorized.GET("/addbill", addBill)
-		authorized.GET("/getbills", getBills)
+		authorized.POST("/bills", addBill)
+		authorized.GET("/bills", getBills)
 	}
 
 	return &App{

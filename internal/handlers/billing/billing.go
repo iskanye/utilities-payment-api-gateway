@@ -14,9 +14,9 @@ func AddBillHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Billing.AddBill"
 
-		address := c.Query("address")
-		amountStr := c.Query("amount")
-		userIDStr := c.Query("user_id")
+		address := c.PostForm("address")
+		amountStr := c.PostForm("amount")
+		userIDStr := c.PostForm("user_id")
 
 		log := log.With(
 			slog.String("op", op),
