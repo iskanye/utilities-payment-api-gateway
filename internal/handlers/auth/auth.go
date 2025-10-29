@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -10,7 +9,7 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-func LoginHandler(a auth.Auth, log *slog.Logger, cookieTTL int, host string) func(*gin.Context) {
+func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
@@ -24,7 +23,7 @@ func LoginHandler(a auth.Auth, log *slog.Logger, cookieTTL int, host string) fun
 
 		log.Info("attempting to login user")
 
-		token, userId, err := a.Login(c, email, password)
+		token, err := a.Login(c, email, password)
 		if err != nil {
 			log.Error("failed to login user", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -34,9 +33,11 @@ func LoginHandler(a auth.Auth, log *slog.Logger, cookieTTL int, host string) fun
 		}
 
 		log.Info("success")
-		c.SetCookie("token", token, cookieTTL, "/", host, false, true)
-		c.SetCookie("user_id", fmt.Sprint(userId), cookieTTL, "/", host, false, true)
-		c.JSON(http.StatusOK, nil)
+		// c.SetCookie("token", token, cookieTTL, "/", host, false, true)
+		// c.SetCookie("user_id", fmt.Sprint(userId), cookieTTL, "/", host, false, true)
+		c.JSON(http.StatusOK, gin.H{
+			"token": token,
+		})
 	}
 }
 
@@ -63,7 +64,9 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 			return
 		}
 
-		log.Info("success")
+		log.Info("successfully registered",
+			slog.Int64("user_id", id),
+		)
 
 		c.JSON(http.StatusOK, gin.H{
 			"id": id,

@@ -21,16 +21,16 @@ type Auth interface {
 		ctx context.Context,
 		email string,
 		password string,
-	) (token string, userId int64, err error)
+	) (token string, err error)
 	Register(
 		ctx context.Context,
 		email string,
 		password string,
 	) (userID int64, err error)
-	Validate(
+	IsAdmin(
 		ctx context.Context,
-		token string,
-	) (isValid bool, err error)
+		userID int64,
+	) (isAdmin bool, err error)
 }
 
 func New(
@@ -51,16 +51,16 @@ func (c *clientApi) Login(
 	ctx context.Context,
 	email string,
 	password string,
-) (string, int64, error) {
+) (string, error) {
 	resp, err := c.auth.Login(ctx, &auth.LoginRequest{
 		Email:    email,
 		Password: password,
 	})
 	if err != nil {
-		return "", 0, status.Error(codes.Internal, err.Error())
+		return "", status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetToken(), resp.GetUserId(), nil
+	return resp.GetToken(), nil
 }
 
 func (c *clientApi) Register(
@@ -79,16 +79,16 @@ func (c *clientApi) Register(
 	return resp.GetUserId(), nil
 }
 
-func (c *clientApi) Validate(
+func (c *clientApi) IsAdmin(
 	ctx context.Context,
-	token string,
-) (bool, error) {
-	resp, err := c.auth.Validate(ctx, &auth.ValidateRequest{
-		Token: token,
+	userID int64,
+) (isAdmin bool, err error) {
+	resp, err := c.auth.IsAdmin(ctx, &auth.User{
+		UserId: userID,
 	})
 	if err != nil {
 		return false, status.Error(codes.Internal, err.Error())
 	}
 
-	return resp.GetIsValid(), nil
+	return resp.GetIsAdmin(), nil
 }

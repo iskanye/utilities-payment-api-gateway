@@ -34,10 +34,12 @@ func New(
 		panic(err)
 	}
 
-	authMiddleware := middlewares.AuthMiddleware(&auth, log)
+	// MIDDLEWARES
+	authMiddleware := middlewares.AuthMiddleware(&auth, log, cfg.AuthSecret)
+	adminsMiddleware := middlewares.AdminMiddleware(&auth, log)
 
 	// AUTH SERVICE
-	login := authHandlers.LoginHandler(&auth, log, int(cfg.CookieTTL.Seconds()), cfg.Host)
+	login := authHandlers.LoginHandler(&auth, log)
 	register := authHandlers.RegisterHandler(&auth, log)
 
 	// BILLING SERVICE
@@ -50,7 +52,10 @@ func New(
 	// Auth required
 	authorized := engine.Group("/", authMiddleware)
 	{
-		authorized.POST("/bills", addBill)
+		admins := authorized.Group("/admin", adminsMiddleware)
+		{
+			admins.POST("/addbill", addBill)
+		}
 		authorized.GET("/bills", getBills)
 	}
 
