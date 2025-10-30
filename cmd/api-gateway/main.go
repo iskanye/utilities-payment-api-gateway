@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	cfg := pkgConfig.MustLoad[config.Config](pkgConfig.NoModyfing)
+	cfg := pkgConfig.MustLoad[config.Config]()
 	log := setupPrettySlog()
 	app := app.New(gin.Default(), log, cfg)
 

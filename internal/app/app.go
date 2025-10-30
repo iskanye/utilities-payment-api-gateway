@@ -66,7 +66,11 @@ func New(
 }
 
 func (a *App) MustRun() {
-	if err := a.e.Run(net.JoinHostPort(a.cfg.Host, strconv.Itoa(a.cfg.Port))); err != nil {
+	if err := a.e.Run(address(a.cfg.Host, a.cfg.Port)); err != nil {
 		panic(err)
 	}
+}
+
+func address(host string, port int) string {
+	return net.JoinHostPort(host, strconv.Itoa(port))
 }

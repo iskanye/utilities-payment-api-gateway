@@ -25,10 +25,5 @@ func ValidateToken(tokenStr string, secret string) (int64, error) {
 		return 0, fmt.Errorf("invalid token")
 	}
 
-	/*userID, ok := claims["uid"].(int)
-	if !ok {
-		return 0, fmt.Errorf("cannot convert uid to int")
-	}*/
-
 	return claims.UserID, nil
 }
