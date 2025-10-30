@@ -6,8 +6,8 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/iskanye/utilities-payment v0.0.0-20251030012307-f62fb70d15e5
-	github.com/iskanye/utilities-payment-proto v0.0.0-20251030113237-b6b89f50efa6
+	github.com/iskanye/utilities-payment v0.0.0-20251030204707-d5f12eaf7ca0
+	github.com/iskanye/utilities-payment-proto v0.0.0-20251030204455-a02bdad893a3
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/grpc v1.76.0
 )
