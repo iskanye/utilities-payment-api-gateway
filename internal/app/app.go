@@ -54,7 +54,7 @@ func New(
 	{
 		admins := authorized.Group("/admin", adminsMiddleware)
 		{
-			admins.POST("/addbill", addBill)
+			admins.POST("/bills", addBill)
 		}
 		authorized.GET("/bills", getBills)
 	}

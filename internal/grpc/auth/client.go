@@ -27,10 +27,6 @@ type Auth interface {
 		email string,
 		password string,
 	) (userID int64, err error)
-	IsAdmin(
-		ctx context.Context,
-		userID int64,
-	) (isAdmin bool, err error)
 }
 
 func New(
@@ -77,18 +73,4 @@ func (c *clientApi) Register(
 	}
 
 	return resp.GetUserId(), nil
-}
-
-func (c *clientApi) IsAdmin(
-	ctx context.Context,
-	userID int64,
-) (isAdmin bool, err error) {
-	resp, err := c.auth.IsAdmin(ctx, &auth.User{
-		UserId: userID,
-	})
-	if err != nil {
-		return false, status.Error(codes.Internal, err.Error())
-	}
-
-	return resp.GetIsAdmin(), nil
 }

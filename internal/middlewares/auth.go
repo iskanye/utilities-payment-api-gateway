@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +12,10 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-const prefix = "Bearer "
+const (
+	prefix    = "Bearer "
+	prefixLen = 7
+)
 
 func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -33,9 +35,9 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 			return
 		}
 
-		token = token[len(prefix):]
+		token = token[prefixLen:]
 
-		userID, err := jwt.ValidateToken(token, secret)
+		userID, isAdmin, err := jwt.ValidateToken(token, secret)
 		if err != nil {
 			log.Error("failed to validate user", logger.Err(err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -46,6 +48,10 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 
 		log.Error("validated successfully")
 		c.Request.Header.Add("UserID", fmt.Sprint(userID))
+		if isAdmin {
+			c.Request.Header.Add("Admin", "1")
+		}
+
 		c.Next()
 	}
 }
@@ -60,20 +66,10 @@ func AdminMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 
 		log.Info("attempting to check users permissions")
 
-		idStr := c.Request.Header.Get("UserID")
-		id, err := strconv.ParseInt(idStr, 10, 64)
-		if err != nil {
-			log.Error("cant convert id to int64", logger.Err(err))
-			c.JSON(http.StatusBadRequest, gin.H{
-				"err": "cant convert id to int64",
-			})
-			return
-		}
-
-		isAdmin, err := a.IsAdmin(c, id)
+		isAdmin := c.Request.Header.Get("Admin") != ""
 
 		if !isAdmin {
-			log.Warn("user is not admin", logger.Err(err))
+			log.Warn("user is not admin")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"err": "user is not admin",
 			})

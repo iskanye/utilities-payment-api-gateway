@@ -40,10 +40,11 @@ func TestAuth_RegisterLogin_Success(t *testing.T) {
 	require.NoError(t, err)
 
 	tokenStr := jsonToken["token"]
-	tokenId, err := jwt.ValidateToken(tokenStr, s.Cfg.AuthSecret)
+	tokenId, isAdmin, err := jwt.ValidateToken(tokenStr, s.Cfg.AuthSecret)
 
 	require.NoError(t, err)
 	assert.Equal(t, tokenId, id)
+	assert.False(t, isAdmin)
 }
 
 // Benchmarks
