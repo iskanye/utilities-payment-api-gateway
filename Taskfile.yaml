@@ -12,6 +12,15 @@ tasks:
     cmds:
       - go run ./cmd/api-gateway --config=./config/dev.yaml
 
+  test:
+    desc: "Run tests"
+    cmds:
+      - go test -v ./tests
+  bench:
+    desc: "Run benchmarks"
+    cmds:
+      - go test -bench=. -benchmem ./tests
+
   docker-build:
     aliases:
       - build

@@ -46,7 +46,22 @@ func TestAuth_RegisterLogin_Success(t *testing.T) {
 	assert.Equal(t, tokenId, id)
 }
 
-func BenchmarkLogin(b *testing.B) {
+// Benchmarks
+
+func BenchmarkAuth_Login(b *testing.B) {
+	s := suite.NewBench(b)
+
+	email := gofakeit.Email()
+	pass := randomPassword()
+
+	// Register
+	resp := s.Register(email, pass)
+	require.Equal(b, http.StatusOK, resp.StatusCode)
+
+	for b.Loop() {
+		resp = s.Login(email, pass)
+		require.Equal(b, http.StatusOK, resp.StatusCode)
+	}
 }
 
 func randomPassword() string {

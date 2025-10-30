@@ -2,6 +2,7 @@ package suite
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"os"
 	"testing"
@@ -20,6 +21,7 @@ type Suite struct {
 }
 
 func NewTest(t *testing.T) *Suite {
+	gin.SetMode(gin.TestMode)
 	t.Helper()
 	t.Parallel()
 
@@ -32,8 +34,31 @@ func NewTest(t *testing.T) *Suite {
 		cancelCtx()
 	})
 
-	eng := gin.Default()
-	app.New(eng, slog.Default(), cfg)
+	eng := gin.New()
+	app.New(eng, discardLogger(), cfg)
+
+	return &Suite{
+		e:   eng,
+		Cfg: cfg,
+		ctx: ctx,
+	}
+}
+
+func NewBench(b *testing.B) *Suite {
+	gin.SetMode(gin.TestMode)
+	b.Helper()
+
+	cfg := pkgConfig.MustLoadPath[config.Config](configPath())
+
+	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.Timeout)
+
+	b.Cleanup(func() {
+		b.Helper()
+		cancelCtx()
+	})
+
+	eng := gin.New()
+	app.New(eng, discardLogger(), cfg)
 
 	return &Suite{
 		e:   eng,
@@ -50,4 +75,8 @@ func configPath() string {
 	}
 
 	return "../config/tests.yaml"
+}
+
+func discardLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(io.Discard, nil))
 }
