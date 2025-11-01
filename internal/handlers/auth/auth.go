@@ -9,7 +9,7 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
+func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
@@ -41,7 +41,7 @@ func LoginHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
 	}
 }
 
-func RegisterHandler(a auth.Auth, log *slog.Logger) func(*gin.Context) {
+func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Register"
 

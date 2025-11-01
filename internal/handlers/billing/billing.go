@@ -10,7 +10,7 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-func AddBillHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
+func AddBillHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Billing.AddBill"
 
@@ -73,7 +73,7 @@ func AddBillHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
 	}
 }
 
-func GetBillsHandler(b billing.Billing, log *slog.Logger) func(*gin.Context) {
+func GetBillsHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Billing.GetBills"
 
