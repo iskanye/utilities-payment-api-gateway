@@ -25,11 +25,19 @@ type Billing interface {
 		address string,
 		amount int,
 		userID int64,
-	) (billId int64, err error)
+	) (int64, error)
 	GetBills(
 		ctx context.Context,
 		userID int64,
-	) (bills []models.Bill, err error)
+	) ([]models.Bill, error)
+	GetBill(
+		ctx context.Context,
+		billID int64,
+	) (models.Bill, error)
+	PayBill(
+		ctx context.Context,
+		billID int64,
+	) error
 }
 
 func New(
@@ -91,9 +99,43 @@ func (c *clientApi) GetBills(
 			Address: bill.GetAddress(),
 			Amount:  int(bill.GetAmount()),
 			UserID:  userID,
-			DueDate: *bill.DueDate,
+			DueDate: bill.GetDueDate(),
 		})
 	}
 
 	return bills, nil
+}
+
+func (c *clientApi) GetBill(
+	ctx context.Context,
+	billID int64,
+) (models.Bill, error) {
+	resp, err := c.billing.GetBill(ctx, &billing.BillRequest{
+		BillId: billID,
+	})
+	if err != nil {
+		return models.Bill{}, status.Error(codes.Internal, err.Error())
+	}
+
+	return models.Bill{
+		ID:      resp.GetBillId(),
+		Address: resp.GetAddress(),
+		Amount:  int(resp.GetAmount()),
+		UserID:  resp.GetUserId(),
+		DueDate: resp.GetDueDate(),
+	}, nil
+}
+
+func (c *clientApi) PayBill(
+	ctx context.Context,
+	billID int64,
+) error {
+	_, err := c.billing.PayBill(ctx, &billing.PayRequest{
+		BillId: billID,
+	})
+	if err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+
+	return nil
 }
