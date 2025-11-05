@@ -9,7 +9,8 @@ import (
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/gin/handlers"
 	grpcAuth "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
-	grpcbilling "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/billing"
+	grpcBilling "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/billing"
+	grpcPayment "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/payment"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/middlewares"
 )
 
@@ -28,7 +29,12 @@ func New(
 		panic(err)
 	}
 
-	billing, err := grpcbilling.New(cfg.Billing.Host, cfg.Billing.Port)
+	billing, err := grpcBilling.New(cfg.Billing.Host, cfg.Billing.Port)
+	if err != nil {
+		panic(err)
+	}
+
+	payment, err := grpcPayment.New(cfg.Payment.Host, cfg.Payment.Port)
 	if err != nil {
 		panic(err)
 	}
@@ -45,6 +51,9 @@ func New(
 	addBill := handlers.AddBillHandler(&billing, log)
 	getBills := handlers.GetBillsHandler(&billing, log)
 
+	// PAYMENT SERVICE
+	payBill := handlers.PayBillHandler(&payment, &billing, log)
+
 	engine.GET("/user", login)
 	engine.POST("/user", register)
 
@@ -56,6 +65,7 @@ func New(
 			admins.POST("/bills", addBill)
 		}
 		authorized.GET("/bills", getBills)
+		authorized.POST("/bills/pay", payBill)
 	}
 
 	return &App{

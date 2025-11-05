@@ -9,6 +9,7 @@ type Config struct {
 	Timeout     time.Duration `yaml:"timeout"`
 	Auth        HostPort      `yaml:"auth"`
 	Billing     HostPort      `yaml:"billing"`
+	Payment     HostPort      `yaml:"payment"`
 	BillingTerm int           `yaml:"billing_term" env-default:"1"` // in Months
 }
 
