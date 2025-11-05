@@ -16,8 +16,9 @@ import (
 type Suite struct {
 	Cfg *config.Config
 
-	e   *gin.Engine
-	ctx context.Context
+	e     *gin.Engine
+	ctx   context.Context
+	token string
 }
 
 func NewTest(t *testing.T) *Suite {

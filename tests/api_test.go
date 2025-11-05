@@ -19,6 +19,8 @@ const (
 	adminEmail  = "admin@admin.com"
 	adminPass   = "admin"
 
+	billsN = 10
+
 	deltaDay = 86400
 )
 
@@ -59,14 +61,125 @@ func TestBilling_GetBill_Success(t *testing.T) {
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
-	token := s.DecodeToken(t, resp)
+	s.DecodeToken(t, resp)
 
 	// Create bill
 	address := gofakeit.Address().Address
 	amount := gofakeit.Number(100, 100000)
 	userID := int64(gofakeit.Number(1, 100000))
 
-	resp = s.AddBill(token, address, amount, userID)
+	resp = s.AddBill(address, amount, userID)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var jsonBillId map[string]int64
+	err := json.NewDecoder(resp.Body).Decode(&jsonBillId)
+	require.NoError(t, err)
+
+	billID := jsonBillId["id"]
+	assert.NotEmpty(t, billID)
+
+	// Get bill
+	resp = s.GetBill(billID)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var bill models.Bill
+	err = json.NewDecoder(resp.Body).Decode(&bill)
+	require.NoError(t, err)
+
+	assert.Equal(t, billID, bill.ID)
+	assert.Equal(t, address, bill.Address)
+	assert.Equal(t, amount, bill.Amount)
+	assert.Equal(t, userID, bill.UserID)
+
+	dueDate, err := time.Parse(time.RFC3339, bill.DueDate)
+	require.NoError(t, err)
+	assert.InDelta(t, time.Now().AddDate(0, s.Cfg.BillingTerm, 0).Unix(), dueDate.Unix(), deltaDay)
+}
+
+func TestBilling_GetBills_Success(t *testing.T) {
+	s := suite.NewTest(t)
+
+	// Login
+	resp := s.Login(adminEmail, adminPass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	s.DecodeToken(t, resp)
+
+	// Create bill
+	userID := int64(gofakeit.Number(1, 100000))
+	var testBills [billsN]struct {
+		id      int64
+		address string
+		amount  int
+	}
+
+	for i := range billsN {
+		address := gofakeit.Address().Address
+		amount := gofakeit.Number(100, 100000)
+
+		testBills[i].address = address
+		testBills[i].amount = amount
+
+		resp = s.AddBill(address, amount, userID)
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+		require.NotEmpty(t, resp.Body)
+
+		var jsonBillId map[string]int64
+		err := json.NewDecoder(resp.Body).Decode(&jsonBillId)
+		require.NoError(t, err)
+
+		billId := jsonBillId["id"]
+		require.NotEmpty(t, billId)
+
+		testBills[i].id = billId
+	}
+
+	// Get bill
+	resp = s.GetBills(userID)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var jsonBills map[string][]models.Bill
+	err := json.NewDecoder(resp.Body).Decode(&jsonBills)
+	require.NoError(t, err)
+
+	bills := jsonBills["bills"]
+	require.Equal(t, billsN, len(bills))
+
+	for i := range bills {
+		testBill := testBills[i]
+		bill := bills[i]
+
+		assert.Equal(t, testBill.id, bill.ID)
+		assert.Equal(t, testBill.address, bill.Address)
+		assert.Equal(t, testBill.amount, bill.Amount)
+		assert.Equal(t, userID, bill.UserID)
+
+		dueDate, err := time.Parse(time.RFC3339, bill.DueDate)
+		require.NoError(t, err)
+		assert.InDelta(t, time.Now().AddDate(0, s.Cfg.BillingTerm, 0).Unix(), dueDate.Unix(), deltaDay)
+	}
+}
+
+func TestPayment_PayBill_Success(t *testing.T) {
+	s := suite.NewTest(t)
+
+	// Login
+	resp := s.Login(adminEmail, adminPass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	s.DecodeToken(t, resp)
+
+	// Create bill
+	address := gofakeit.Address().Address
+	amount := gofakeit.Number(100, 100000)
+	userID := int64(gofakeit.Number(1, 100000))
+
+	resp = s.AddBill(address, amount, userID)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
@@ -77,25 +190,10 @@ func TestBilling_GetBill_Success(t *testing.T) {
 	billId := jsonBillId["id"]
 	assert.NotEmpty(t, billId)
 
-	// Get bill
-	resp = s.GetBills(token, userID)
-	require.Equal(t, http.StatusOK, resp.StatusCode)
-	require.NotEmpty(t, resp.Body)
-
-	var jsonBills map[string][]models.Bill
-	err = json.NewDecoder(resp.Body).Decode(&jsonBills)
+	// Pay bill
+	resp = s.PayBill(billId)
 	require.NoError(t, err)
-
-	bill := jsonBills["bills"][0]
-
-	assert.Equal(t, billId, bill.ID)
-	assert.Equal(t, address, bill.Address)
-	assert.Equal(t, amount, bill.Amount)
-	assert.Equal(t, userID, bill.UserID)
-
-	dueDate, err := time.Parse(time.RFC3339, bill.DueDate)
-	require.NoError(t, err)
-	assert.InDelta(t, time.Now().AddDate(0, s.Cfg.BillingTerm, 0).Unix(), dueDate.Unix(), deltaDay)
+	require.Equal(t, http.StatusNoContent, resp.StatusCode)
 }
 
 // Benchmarks
@@ -119,17 +217,17 @@ func BenchmarkBilling_GetBills(b *testing.B) {
 
 	// Login
 	resp := s.Login(adminEmail, adminPass)
-	token := s.DecodeToken(b, resp)
+	s.DecodeToken(b, resp)
 
 	// Create bill
 	address := gofakeit.Address().Address
 	amount := gofakeit.Number(100, 100000)
 	userID := int64(gofakeit.Number(1, 100000))
 
-	s.AddBill(token, address, amount, userID)
+	s.AddBill(address, amount, userID)
 
 	for b.Loop() {
-		s.GetBills(token, userID)
+		s.GetBills(userID)
 	}
 }
 

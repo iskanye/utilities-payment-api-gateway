@@ -9,7 +9,6 @@ import (
 )
 
 func (s *Suite) AddBill(
-	token string,
 	address string,
 	amount int,
 	user_id int64,
@@ -23,7 +22,7 @@ func (s *Suite) AddBill(
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer "+s.token)
 
 	s.e.ServeHTTP(w, req)
 
@@ -31,7 +30,6 @@ func (s *Suite) AddBill(
 }
 
 func (s *Suite) GetBills(
-	token string,
 	user_id int64,
 ) *http.Response {
 	w := httptest.NewRecorder()
@@ -40,7 +38,20 @@ func (s *Suite) GetBills(
 	vals.Add("user_id", fmt.Sprint(user_id))
 
 	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills?"+vals.Encode(), nil)
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer "+s.token)
+
+	s.e.ServeHTTP(w, req)
+
+	return w.Result()
+}
+
+func (s *Suite) GetBill(
+	bill_id int64,
+) *http.Response {
+	w := httptest.NewRecorder()
+
+	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills/"+fmt.Sprint(bill_id), nil)
+	req.Header.Set("Authorization", "Bearer "+s.token)
 
 	s.e.ServeHTTP(w, req)
 

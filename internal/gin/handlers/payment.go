@@ -68,6 +68,9 @@ func PayBillHandler(p payment.Payment, b billing.Billing, log *slog.Logger) gin.
 				})
 				return
 			}
+
+			c.Status(http.StatusNoContent)
+			return
 		}
 
 		log.Error("payment failed")

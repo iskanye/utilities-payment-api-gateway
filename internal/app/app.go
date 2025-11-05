@@ -55,7 +55,7 @@ func New(
 	// PAYMENT SERVICE
 	payBill := handlers.PayBillHandler(&payment, &billing, log)
 
-	engine.GET("/users/login", login)
+	engine.POST("/users/login", login)
 	engine.POST("/users/register", register)
 
 	// Auth required

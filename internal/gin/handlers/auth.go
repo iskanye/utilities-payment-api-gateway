@@ -68,6 +68,8 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 			slog.Int64("user_id", id),
 		)
 
-		c.Status(http.StatusNoContent)
+		c.JSON(http.StatusOK, gin.H{
+			"id": id,
+		})
 	}
 }

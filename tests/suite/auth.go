@@ -20,7 +20,7 @@ func (s *Suite) Register(
 	form.Add("email", email)
 	form.Add("password", password)
 
-	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/user", strings.NewReader(form.Encode()))
+	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/users/register", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	s.e.ServeHTTP(w, req)
@@ -34,11 +34,12 @@ func (s *Suite) Login(
 ) *http.Response {
 	w := httptest.NewRecorder()
 
-	vals := url.Values{}
-	vals.Add("email", email)
-	vals.Add("password", password)
+	form := url.Values{}
+	form.Add("email", email)
+	form.Add("password", password)
 
-	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/user?"+vals.Encode(), nil)
+	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/users/login", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	s.e.ServeHTTP(w, req)
 
@@ -53,5 +54,6 @@ func (s *Suite) DecodeToken(
 	err := json.NewDecoder(r.Body).Decode(&jsonToken)
 	require.NoError(t, err)
 
-	return jsonToken["token"]
+	s.token = jsonToken["token"]
+	return s.token
 }
