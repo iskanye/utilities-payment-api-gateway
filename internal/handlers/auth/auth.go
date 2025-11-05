@@ -9,6 +9,7 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
+// GET /user
 func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
@@ -33,14 +34,13 @@ func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 		}
 
 		log.Info("success")
-		// c.SetCookie("token", token, cookieTTL, "/", host, false, true)
-		// c.SetCookie("user_id", fmt.Sprint(userId), cookieTTL, "/", host, false, true)
 		c.JSON(http.StatusOK, gin.H{
 			"token": token,
 		})
 	}
 }
 
+// POST /user
 func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Register"
