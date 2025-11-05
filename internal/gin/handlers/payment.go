@@ -4,11 +4,11 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/billing"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/payment"
+	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
 // POST /bills/pay
@@ -16,28 +16,32 @@ func PayBillHandler(p payment.Payment, b billing.Billing, log *slog.Logger) gin.
 	return func(c *gin.Context) {
 		const op = "Payment.PayBill"
 
+		idStr := c.PostForm("id")
+
 		log := log.With(
 			slog.String("op", op),
+			slog.String("bill_id", idStr),
 		)
-
-		idStr := strings.Trim(c.PostForm("id"), "/")
 
 		id, err := strconv.ParseInt(idStr, 10, 64)
 		if err != nil {
-			log.Error("cannot convert id to int64")
+			if idStr == "" {
+				log.Error("bill_id required", logger.Err(err))
+				c.JSON(http.StatusBadRequest, gin.H{
+					"err": err.Error(),
+				})
+				return
+			}
+			log.Error("cannot convert id to int64", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"err": "cannot convert id to int64",
 			})
 			return
 		}
 
-		log = log.With(
-			slog.Int64("bill_id", id),
-		)
-
 		bill, err := b.GetBill(c, id)
 		if err != nil {
-			log.Error("cannot find bill")
+			log.Error("cannot find bill", logger.Err(err))
 			c.JSON(http.StatusNotFound, gin.H{
 				"err": "cannot convert id to int64",
 			})
@@ -46,7 +50,7 @@ func PayBillHandler(p payment.Payment, b billing.Billing, log *slog.Logger) gin.
 
 		paymentStatus, err := p.ProcessPayment(c, bill.Amount)
 		if err != nil {
-			log.Error("cannot process payment")
+			log.Error("cannot process payment", logger.Err(err))
 			c.JSON(http.StatusBadRequest, gin.H{
 				"err": "cannot process payment",
 			})
@@ -58,7 +62,7 @@ func PayBillHandler(p payment.Payment, b billing.Billing, log *slog.Logger) gin.
 
 			err = b.PayBill(c, id)
 			if err != nil {
-				log.Error("cannot pay the bill")
+				log.Error("cannot pay the bill", logger.Err(err))
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"err": "cannot pay the bill",
 				})

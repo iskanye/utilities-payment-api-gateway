@@ -49,6 +49,7 @@ func New(
 
 	// BILLING SERVICE
 	addBill := handlers.AddBillHandler(&billing, log)
+	getBill := handlers.GetBillHandler(&billing, log)
 	getBills := handlers.GetBillsHandler(&billing, log)
 
 	// PAYMENT SERVICE
@@ -65,6 +66,7 @@ func New(
 			admins.POST("/bills", addBill)
 		}
 		authorized.GET("/bills", getBills)
+		authorized.GET("/bills/:id", getBill)
 		authorized.POST("/bills/pay", payBill)
 	}
 

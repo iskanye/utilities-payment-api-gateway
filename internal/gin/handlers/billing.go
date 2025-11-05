@@ -74,6 +74,50 @@ func AddBillHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	}
 }
 
+// GET /bills/:id
+func GetBillHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		const op = "Billing.GetBill"
+
+		billIDStr := c.Param("id")
+
+		log := log.With(
+			slog.String("op", op),
+			slog.String("bill_id", billIDStr),
+		)
+
+		log.Info("attempting to get bill")
+
+		billID, err := strconv.ParseInt(billIDStr, 10, 64)
+		if err != nil {
+			if billIDStr == "" {
+				log.Error("bill_id required", logger.Err(err))
+				c.JSON(http.StatusBadRequest, gin.H{
+					"err": err.Error(),
+				})
+				return
+			}
+			log.Error("cant convert bill_id to int64", logger.Err(err))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
+			return
+		}
+
+		bill, err := b.GetBill(c, billID)
+		if err != nil {
+			log.Error("failed to get bill", logger.Err(err))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
+			return
+		}
+
+		log.Info("success")
+		c.JSON(http.StatusOK, bill)
+	}
+}
+
 // GET /bills
 func GetBillsHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
