@@ -1,4 +1,4 @@
-package billing
+package handlers
 
 import (
 	"log/slog"

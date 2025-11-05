@@ -7,7 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/iskanye/utilities-payment v0.0.0-20251030204707-d5f12eaf7ca0
-	github.com/iskanye/utilities-payment-proto v0.1.0
+	github.com/iskanye/utilities-payment-proto v0.1.1
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/grpc v1.76.0
 )

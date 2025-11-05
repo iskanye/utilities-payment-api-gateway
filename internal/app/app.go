@@ -7,10 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/gin/handlers"
 	grpcAuth "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	grpcbilling "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/billing"
-	authHandlers "github.com/iskanye/utilities-payment-api-gateway/internal/handlers/auth"
-	billingHandlers "github.com/iskanye/utilities-payment-api-gateway/internal/handlers/billing"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/middlewares"
 )
 
@@ -39,12 +38,12 @@ func New(
 	adminsMiddleware := middlewares.AdminMiddleware(&auth, log)
 
 	// AUTH SERVICE
-	login := authHandlers.LoginHandler(&auth, log)
-	register := authHandlers.RegisterHandler(&auth, log)
+	login := handlers.LoginHandler(&auth, log)
+	register := handlers.RegisterHandler(&auth, log)
 
 	// BILLING SERVICE
-	addBill := billingHandlers.AddBillHandler(&billing, log)
-	getBills := billingHandlers.GetBillsHandler(&billing, log)
+	addBill := handlers.AddBillHandler(&billing, log)
+	getBills := handlers.GetBillsHandler(&billing, log)
 
 	engine.GET("/user", login)
 	engine.POST("/user", register)

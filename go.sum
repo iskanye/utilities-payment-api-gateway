@@ -51,12 +51,10 @@ github.com/ilyakaznacheev/cleanenv v1.5.0 h1:0VNZXggJE2OYdXE87bfSSwGxeiGt9moSR2l
 github.com/ilyakaznacheev/cleanenv v1.5.0/go.mod h1:a5aDzaJrLCQZsazHol1w8InnDcOX0OColm64SlIi6gk=
 github.com/iskanye/utilities-payment v0.0.0-20251030204707-d5f12eaf7ca0 h1:9Ry3/cbg0mlsXkMXERPzWtOsuDpJkCEB6pqeM2O0aD0=
 github.com/iskanye/utilities-payment v0.0.0-20251030204707-d5f12eaf7ca0/go.mod h1:4+J0gZDB0fUHrjnA9RGcn35qkOTyhiFSrAa/qjQC/4Y=
-github.com/iskanye/utilities-payment-proto v0.0.0-20251030204455-a02bdad893a3 h1:NEnONUiB6tRKqPIeqL1boxpQZUiLdZJOYlzQIgbWDmE=
-github.com/iskanye/utilities-payment-proto v0.0.0-20251030204455-a02bdad893a3/go.mod h1:Y80c5i/ywsTgICyJyE67aWU1CtSsdF7g1nqAYXXPFxs=
-github.com/iskanye/utilities-payment-proto v0.0.0-20251031104756-7cc11ba6fa94 h1:kfVNXt1+vZ9/Obl7i9aLUQGDrbP4rklrjY7ys0lYJfw=
-github.com/iskanye/utilities-payment-proto v0.0.0-20251031104756-7cc11ba6fa94/go.mod h1:Y80c5i/ywsTgICyJyE67aWU1CtSsdF7g1nqAYXXPFxs=
 github.com/iskanye/utilities-payment-proto v0.1.0 h1:L9fPGQ7dPPIDwYEwbeU7bTSquSyiKpC9rHi/2jFBfMw=
 github.com/iskanye/utilities-payment-proto v0.1.0/go.mod h1:Y80c5i/ywsTgICyJyE67aWU1CtSsdF7g1nqAYXXPFxs=
+github.com/iskanye/utilities-payment-proto v0.1.1 h1:u8/+UBZB0K8mgnF1O3wNhW/QSWPGTjfIu7+FJH91+ug=
+github.com/iskanye/utilities-payment-proto v0.1.1/go.mod h1:Y80c5i/ywsTgICyJyE67aWU1CtSsdF7g1nqAYXXPFxs=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
