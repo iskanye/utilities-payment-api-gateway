@@ -9,13 +9,13 @@ import (
 	"github.com/iskanye/utilities-payment/pkg/logger"
 )
 
-// GET /user
+// POST /users/login
 func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
-		email := c.Query("email")
-		password := c.Query("password")
+		email := c.PostForm("email")
+		password := c.PostForm("password")
 
 		log := log.With(
 			slog.String("op", op),
@@ -40,7 +40,7 @@ func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	}
 }
 
-// POST /user
+// POST /users/register
 func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Register"
@@ -68,8 +68,6 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 			slog.Int64("user_id", id),
 		)
 
-		c.JSON(http.StatusOK, gin.H{
-			"id": id,
-		})
+		c.Status(http.StatusNoContent)
 	}
 }

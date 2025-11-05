@@ -54,8 +54,8 @@ func New(
 	// PAYMENT SERVICE
 	payBill := handlers.PayBillHandler(&payment, &billing, log)
 
-	engine.GET("/user", login)
-	engine.POST("/user", register)
+	engine.GET("/users/login", login)
+	engine.POST("/users/register", register)
 
 	// Auth required
 	authorized := engine.Group("/", authMiddleware)
