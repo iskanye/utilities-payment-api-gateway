@@ -4,7 +4,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o /bin/api-gateway ./cmd/auth/main.go
+RUN go build -o /bin/api-gateway ./cmd/api-gateway/main.go
 
 # Запуск
 FROM alpine
