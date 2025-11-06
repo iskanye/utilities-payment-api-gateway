@@ -9,7 +9,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/iskanye/utilities-payment-api-gateway/tests/suite"
-	"github.com/iskanye/utilities-payment/pkg/models"
+	"github.com/iskanye/utilities-payment-utils/pkg/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

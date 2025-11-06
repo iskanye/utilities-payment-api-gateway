@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
-	"github.com/iskanye/utilities-payment/pkg/logger"
+	"github.com/iskanye/utilities-payment-utils/pkg/logger"
 )
 
 const (

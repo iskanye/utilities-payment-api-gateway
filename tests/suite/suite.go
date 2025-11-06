@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/app"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
-	pkgConfig "github.com/iskanye/utilities-payment/pkg/config"
+	pkgConfig "github.com/iskanye/utilities-payment-utils/pkg/config"
 )
 
 type Suite struct {

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/billing"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/payment"
-	"github.com/iskanye/utilities-payment/pkg/logger"
+	"github.com/iskanye/utilities-payment-utils/pkg/logger"
 )
 
 // POST /bills/pay

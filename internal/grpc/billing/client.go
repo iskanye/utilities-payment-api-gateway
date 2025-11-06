@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/iskanye/utilities-payment-proto/billing"
-	"github.com/iskanye/utilities-payment/pkg/models"
+	"github.com/iskanye/utilities-payment-utils/pkg/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
