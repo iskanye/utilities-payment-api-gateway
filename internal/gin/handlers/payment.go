@@ -43,7 +43,7 @@ func PayBillHandler(p payment.Payment, b billing.Billing, log *slog.Logger) gin.
 		if err != nil {
 			log.Error("cannot find bill", logger.Err(err))
 			c.JSON(http.StatusNotFound, gin.H{
-				"err": "cannot convert id to int64",
+				"err": "cannot find bill",
 			})
 			return
 		}
