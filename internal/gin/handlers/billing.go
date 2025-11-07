@@ -123,7 +123,7 @@ func GetBillsHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Billing.GetBills"
 
-		userIDStr := c.Query("user_id")
+		userIDStr := c.Request.Header.Get("UserID")
 
 		log := log.With(
 			slog.String("op", op),
