@@ -66,7 +66,7 @@ func (c *clientApi) AddBill(
 		UserId:  userID,
 	})
 	if err != nil {
-		return 0, status.Error(codes.Internal, err.Error())
+		return 0, err
 	}
 
 	return resp.GetBillId(), nil
@@ -80,7 +80,7 @@ func (c *clientApi) GetBills(
 		UserId: userID,
 	})
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, err
 	}
 
 	bills := make([]models.Bill, 0)
@@ -89,7 +89,7 @@ func (c *clientApi) GetBills(
 		bill, err := resp.Recv()
 		if err != nil {
 			if !errors.Is(err, io.EOF) {
-				return nil, status.Error(codes.Internal, err.Error())
+				return nil, err
 			}
 			break
 		}
@@ -114,7 +114,7 @@ func (c *clientApi) GetBill(
 		BillId: billID,
 	})
 	if err != nil {
-		return models.Bill{}, status.Error(codes.Internal, err.Error())
+		return models.Bill{}, err
 	}
 
 	return models.Bill{
@@ -133,9 +133,6 @@ func (c *clientApi) PayBill(
 	_, err := c.billing.PayBill(ctx, &billing.PayRequest{
 		BillId: billID,
 	})
-	if err != nil {
-		return status.Error(codes.Internal, err.Error())
-	}
 
-	return nil
+	return err
 }

@@ -7,9 +7,7 @@ import (
 
 	"github.com/iskanye/utilities-payment-proto/auth"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/status"
 )
 
 type clientApi struct {
@@ -37,7 +35,7 @@ func New(
 		net.JoinHostPort(host, strconv.Itoa(port)),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return clientApi{}, status.Error(codes.Unavailable, err.Error())
+		return clientApi{}, err
 	}
 
 	return clientApi{auth.NewAuthClient(cc)}, nil
@@ -53,7 +51,7 @@ func (c *clientApi) Login(
 		Password: password,
 	})
 	if err != nil {
-		return "", status.Error(codes.Internal, err.Error())
+		return "", err
 	}
 
 	return resp.GetToken(), nil
@@ -69,7 +67,7 @@ func (c *clientApi) Register(
 		Password: password,
 	})
 	if err != nil {
-		return 0, status.Error(codes.Internal, err.Error())
+		return 0, err
 	}
 
 	return resp.GetUserId(), nil

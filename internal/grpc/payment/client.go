@@ -7,9 +7,7 @@ import (
 
 	"github.com/iskanye/utilities-payment-proto/payment"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/status"
 )
 
 type PaymentStatus = payment.PaymentStatus
@@ -39,7 +37,7 @@ func New(
 		net.JoinHostPort(host, strconv.Itoa(port)),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return clientApi{}, status.Error(codes.Unavailable, err.Error())
+		return clientApi{}, err
 	}
 
 	return clientApi{payment.NewPaymentClient(cc)}, nil
@@ -53,7 +51,7 @@ func (c *clientApi) ProcessPayment(
 		Amount: int32(amount),
 	})
 	if err != nil {
-		return PAYMENT_FAILED, status.Error(codes.Internal, err.Error())
+		return PAYMENT_FAILED, err
 	}
 
 	return resp.GetStatus(), nil
