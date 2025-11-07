@@ -46,7 +46,7 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 			return
 		}
 
-		log.Error("validated successfully")
+		log.Info("validated successfully")
 		c.Request.Header.Add("UserID", fmt.Sprint(userID))
 		if isAdmin {
 			c.Request.Header.Add("Admin", "1")
