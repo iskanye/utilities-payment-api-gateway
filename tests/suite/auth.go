@@ -46,6 +46,17 @@ func (s *Suite) Login(
 	return w.Result()
 }
 
+func (s *Suite) GetUsers() *http.Response {
+	w := httptest.NewRecorder()
+
+	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", nil)
+	req.Header.Set("Authorization", "Bearer "+s.token)
+
+	s.e.ServeHTTP(w, req)
+
+	return w.Result()
+}
+
 func (s *Suite) DecodeToken(
 	t require.TestingT,
 	r *http.Response,

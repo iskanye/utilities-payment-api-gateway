@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"errors"
+	"io"
 	"net"
 	"strconv"
 
@@ -9,6 +11,11 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
+
+type User struct {
+	ID    int64
+	Email string
+}
 
 type clientApi struct {
 	auth auth.AuthClient
@@ -25,6 +32,9 @@ type Auth interface {
 		email string,
 		password string,
 	) (userID int64, err error)
+	GetUsers(
+		ctx context.Context,
+	) (users []User, err error)
 }
 
 func New(
@@ -71,4 +81,32 @@ func (c *clientApi) Register(
 	}
 
 	return resp.GetUserId(), nil
+}
+
+func (c *clientApi) GetUsers(
+	ctx context.Context,
+) ([]User, error) {
+	resp, err := c.auth.Users(ctx, &auth.UsersRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]User, 0)
+
+	for {
+		user, err := resp.Recv()
+		if err != nil {
+			if !errors.Is(err, io.EOF) {
+				return nil, err
+			}
+			break
+		}
+
+		users = append(users, User{
+			ID:    user.GetId(),
+			Email: user.GetEmail(),
+		})
+	}
+
+	return users, nil
 }

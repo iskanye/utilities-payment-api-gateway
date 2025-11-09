@@ -46,6 +46,7 @@ func New(
 	// AUTH SERVICE
 	login := handlers.LoginHandler(&auth, log)
 	register := handlers.RegisterHandler(&auth, log)
+	getUsers := handlers.GetUsersHandler(&auth, log)
 
 	// BILLING SERVICE
 	addBill := handlers.AddBillHandler(&billing, log)
@@ -64,6 +65,7 @@ func New(
 		admins := authorized.Group("/admin", adminsMiddleware)
 		{
 			admins.POST("/bills", addBill)
+			admins.GET("/users", getUsers)
 		}
 		authorized.GET("/bills", getBills)
 		authorized.GET("/bills/:id", getBill)

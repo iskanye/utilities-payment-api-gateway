@@ -73,3 +73,29 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 		})
 	}
 }
+
+// GET /admin/users
+func GetUsersHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		const op = "Auth.GetUsers"
+
+		log := log.With(
+			slog.String("op", op),
+		)
+
+		log.Info("attempting to get users list")
+
+		users, err := a.GetUsers(c)
+		if err != nil {
+			log.Error("failed to fetch users", logger.Err(err))
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
+			return
+		}
+
+		log.Info("users list fetched successfully")
+
+		c.JSON(http.StatusOK, users)
+	}
+}
