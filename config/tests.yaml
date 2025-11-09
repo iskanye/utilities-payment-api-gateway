@@ -1,0 +1,10 @@
+port: 8080
+secret: "TEST-SECRET"
+timeout: 10h
+auth:
+  port: 44044
+billing:
+  port: 44080
+payment:
+  port: 44000
+billing_term: 1
