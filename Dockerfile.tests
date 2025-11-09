@@ -1,0 +1,15 @@
+# Сборка
+FROM golang:alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go test -c -o /bin/test ./tests/api_test.go
+
+# Запуск
+FROM alpine
+USER root
+WORKDIR /home/app
+COPY --from=builder /bin/test ./
+COPY --from=builder /app/config ./config
+ENTRYPOINT ["./test"]
