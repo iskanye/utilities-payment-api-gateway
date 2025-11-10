@@ -1,6 +1,9 @@
 package config
 
-import "time"
+import (
+	"os"
+	"time"
+)
 
 type Config struct {
 	Host        string        `yaml:"host" env-default:"localhost"`
@@ -16,4 +19,14 @@ type Config struct {
 type HostPort struct {
 	Host string `yaml:"host" env-default:"localhost"`
 	Port int    `yaml:"port" env-required:"true"`
+}
+
+func (c *Config) LoadSecret() {
+	// Если секрет не задан в конфиге ищем его в параметрах окружения
+	if c.AuthSecret == "" {
+		c.AuthSecret = os.Getenv("AUTH_SECRET")
+	}
+	if c.AuthSecret == "" {
+		panic("auth secret mustnt be empty")
+	}
 }
