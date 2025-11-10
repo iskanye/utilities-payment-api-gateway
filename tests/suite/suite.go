@@ -50,6 +50,7 @@ func NewBench(b *testing.B) *Suite {
 	b.Helper()
 
 	cfg := pkgConfig.MustLoadPath[config.Config](configPath())
+	cfg.LoadSecret()
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.Timeout)
 
