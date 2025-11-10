@@ -15,7 +15,7 @@ import (
 
 func main() {
 	cfg := pkgConfig.MustLoad[config.Config]()
-	cfg.LoadSecret()
+	cfg.MustLoadSecret()
 
 	log := setupPrettySlog()
 	app := app.New(gin.Default(), log, cfg)

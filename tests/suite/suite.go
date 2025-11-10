@@ -29,7 +29,7 @@ func NewTest(t *testing.T) *Suite {
 	t.Parallel()
 
 	cfg := pkgConfig.MustLoadPath[config.Config](configPath())
-	cfg.LoadSecret()
+	cfg.MustLoadSecret()
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.Timeout)
 
@@ -53,7 +53,7 @@ func NewBench(b *testing.B) *Suite {
 	b.Helper()
 
 	cfg := pkgConfig.MustLoadPath[config.Config](configPath())
-	cfg.LoadSecret()
+	cfg.MustLoadSecret()
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.Timeout)
 
