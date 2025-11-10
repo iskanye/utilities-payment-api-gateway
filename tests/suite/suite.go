@@ -14,10 +14,12 @@ import (
 )
 
 type Suite struct {
-	Cfg *config.Config
+	Cfg    *config.Config
+	UserID int64
 
-	e     *gin.Engine
-	ctx   context.Context
+	e   *gin.Engine
+	ctx context.Context
+
 	token string
 }
 
@@ -27,6 +29,7 @@ func NewTest(t *testing.T) *Suite {
 	t.Parallel()
 
 	cfg := pkgConfig.MustLoadPath[config.Config](configPath())
+	cfg.LoadSecret()
 
 	ctx, cancelCtx := context.WithTimeout(context.Background(), cfg.Timeout)
 

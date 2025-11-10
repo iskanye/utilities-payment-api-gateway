@@ -22,7 +22,7 @@ func (s *Suite) AddBill(
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Authorization", "Bearer "+s.token)
+	s.AddHeader(req, s.UserID)
 
 	s.e.ServeHTTP(w, req)
 
@@ -37,8 +37,8 @@ func (s *Suite) GetBills(
 	vals := url.Values{}
 	vals.Add("user_id", fmt.Sprint(user_id))
 
-	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills?"+vals.Encode(), nil)
-	req.Header.Set("Authorization", "Bearer "+s.token)
+	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills", nil)
+	s.AddHeader(req, user_id)
 
 	s.e.ServeHTTP(w, req)
 
@@ -51,7 +51,7 @@ func (s *Suite) GetBill(
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills/"+fmt.Sprint(bill_id), nil)
-	req.Header.Set("Authorization", "Bearer "+s.token)
+	s.AddHeader(req, s.UserID)
 
 	s.e.ServeHTTP(w, req)
 

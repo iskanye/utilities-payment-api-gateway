@@ -2,11 +2,13 @@ package suite
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 
+	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,7 +52,7 @@ func (s *Suite) GetUsers() *http.Response {
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", nil)
-	req.Header.Set("Authorization", "Bearer "+s.token)
+	s.AddHeader(req, s.UserID)
 
 	s.e.ServeHTTP(w, req)
 
@@ -60,11 +62,21 @@ func (s *Suite) GetUsers() *http.Response {
 func (s *Suite) DecodeToken(
 	t require.TestingT,
 	r *http.Response,
-) string {
+) (int64, bool) {
 	var jsonToken map[string]string
 	err := json.NewDecoder(r.Body).Decode(&jsonToken)
 	require.NoError(t, err)
 
 	s.token = jsonToken["token"]
-	return s.token
+
+	userID, isAdmin, err := jwt.ValidateToken(s.token, s.Cfg.AuthSecret)
+	require.NoError(t, err)
+
+	s.UserID = userID
+	return s.UserID, isAdmin
+}
+
+func (s *Suite) AddHeader(req *http.Request, userID int64) {
+	req.Header.Set("Authorization", "Bearer "+s.token)
+	req.Header.Set("UserID", fmt.Sprint(userID))
 }

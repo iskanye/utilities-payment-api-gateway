@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/iskanye/utilities-payment-api-gateway/tests/suite"
 	"github.com/iskanye/utilities-payment-utils/pkg/models"
 	"github.com/stretchr/testify/assert"
@@ -45,8 +44,7 @@ func TestAuth_RegisterLogin_Success(t *testing.T) {
 	resp = s.Login(email, pass)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 
-	tokenStr := s.DecodeToken(t, resp)
-	tokenId, isAdmin, err := jwt.ValidateToken(tokenStr, s.Cfg.AuthSecret)
+	tokenId, isAdmin := s.DecodeToken(t, resp)
 
 	require.NoError(t, err)
 	assert.Equal(t, tokenId, id)
