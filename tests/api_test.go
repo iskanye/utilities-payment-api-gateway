@@ -15,8 +15,10 @@ import (
 
 const (
 	passwordLen = 10
-	adminEmail  = "admin@admin.com"
-	adminPass   = "admin"
+
+	adminEmail = "admin@admin.com"
+	adminPass  = "admin"
+	adminID    = 1
 
 	billsN = 10
 
@@ -99,15 +101,28 @@ func TestBilling_GetBill_Success(t *testing.T) {
 func TestBilling_GetBills_Success(t *testing.T) {
 	s := suite.NewTest(t)
 
+	// Register new user
+	email := gofakeit.Email()
+	pass := randomPassword()
+	resp := s.Register(email, pass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var respJson map[string]int64
+	err := json.NewDecoder(resp.Body).Decode(&respJson)
+	require.NoError(t, err)
+
+	userID := respJson["id"]
+	require.NotEmpty(t, userID)
+
 	// Login
-	resp := s.Login(adminEmail, adminPass)
+	resp = s.Login(adminEmail, adminPass)
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
 	s.DecodeToken(t, resp)
 
 	// Create bill
-	userID := int64(gofakeit.Number(1, 100000))
 	var testBills [billsN]struct {
 		id      int64
 		address string
@@ -135,13 +150,20 @@ func TestBilling_GetBills_Success(t *testing.T) {
 		testBills[i].id = billId
 	}
 
+	// Login
+	resp = s.Login(email, pass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	s.DecodeToken(t, resp)
+
 	// Get bill
-	resp = s.GetBills(userID)
+	resp = s.GetBills()
 	require.Equal(t, http.StatusOK, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
 	var jsonBills map[string][]models.Bill
-	err := json.NewDecoder(resp.Body).Decode(&jsonBills)
+	err = json.NewDecoder(resp.Body).Decode(&jsonBills)
 	require.NoError(t, err)
 
 	bills := jsonBills["bills"]
@@ -232,12 +254,13 @@ func BenchmarkBilling_GetBills(b *testing.B) {
 	// Create bill
 	address := gofakeit.Address().Address
 	amount := gofakeit.Number(100, 100000)
-	userID := int64(gofakeit.Number(1, 100000))
 
-	s.AddBill(address, amount, userID)
+	s.AddBill(address, amount, adminID)
+	s.AddBill(address, amount, adminID)
+	s.AddBill(address, amount, adminID)
 
 	for b.Loop() {
-		s.GetBills(userID)
+		s.GetBills()
 	}
 }
 

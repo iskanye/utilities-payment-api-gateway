@@ -22,23 +22,18 @@ func (s *Suite) AddBill(
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	s.AddHeader(req, s.UserID)
+	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
 
 	return w.Result()
 }
 
-func (s *Suite) GetBills(
-	user_id int64,
-) *http.Response {
+func (s *Suite) GetBills() *http.Response {
 	w := httptest.NewRecorder()
 
-	vals := url.Values{}
-	vals.Add("user_id", fmt.Sprint(user_id))
-
 	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills", nil)
-	s.AddHeader(req, user_id)
+	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
 
@@ -51,7 +46,7 @@ func (s *Suite) GetBill(
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/bills/"+fmt.Sprint(bill_id), nil)
-	s.AddHeader(req, s.UserID)
+	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
 

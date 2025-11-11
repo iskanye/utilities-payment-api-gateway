@@ -18,7 +18,7 @@ func (s *Suite) PayBill(
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/bills/pay", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	s.AddHeader(req, s.UserID)
+	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
 

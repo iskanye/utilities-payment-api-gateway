@@ -52,7 +52,7 @@ func (s *Suite) GetUsers() *http.Response {
 	w := httptest.NewRecorder()
 
 	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", nil)
-	s.AddHeader(req, s.UserID)
+	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
 
@@ -76,7 +76,7 @@ func (s *Suite) DecodeToken(
 	return s.UserID, isAdmin
 }
 
-func (s *Suite) AddHeader(req *http.Request, userID int64) {
+func (s *Suite) AddHeader(req *http.Request) {
 	req.Header.Set("Authorization", "Bearer "+s.token)
-	req.Header.Set("UserID", fmt.Sprint(userID))
+	req.Header.Set("UserID", fmt.Sprint(s.UserID))
 }
