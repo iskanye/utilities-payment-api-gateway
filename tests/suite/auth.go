@@ -69,11 +69,11 @@ func (s *Suite) DecodeToken(
 
 	s.token = jsonToken["token"]
 
-	userID, isAdmin, err := jwt.ValidateToken(s.token, s.Cfg.AuthSecret)
+	payload, err := jwt.ValidateToken(s.token, s.Cfg.AuthSecret)
 	require.NoError(t, err)
 
-	s.UserID = userID
-	return s.UserID, isAdmin
+	s.UserID = payload.UserID
+	return s.UserID, payload.IsAdmin
 }
 
 func (s *Suite) AddHeader(req *http.Request) {

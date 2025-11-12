@@ -37,7 +37,7 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 
 		token = token[prefixLen:]
 
-		userID, isAdmin, err := jwt.ValidateToken(token, secret)
+		payload, err := jwt.ValidateToken(token, secret)
 		if err != nil {
 			log.Error("failed to validate user", logger.Err(err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -47,8 +47,8 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 		}
 
 		log.Info("validated successfully")
-		c.Request.Header.Add("UserID", fmt.Sprint(userID))
-		if isAdmin {
+		c.Request.Header.Add("UserID", fmt.Sprint(payload.UserID))
+		if payload.IsAdmin {
 			c.Request.Header.Add("Admin", "1")
 		}
 

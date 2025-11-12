@@ -13,18 +13,31 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-func ValidateToken(tokenStr string, secret string) (int64, bool, error) {
+type TokenPayload struct {
+	UserID  int64 `json:"uid"`
+	IsAdmin bool  `json:"is_admin"`
+}
+
+type TokenSaver interface {
+	Set(val string, key string) error
+}
+
+type TokenProvider interface {
+	Get(key string) (string, error)
+}
+
+func ValidateToken(tokenStr string, secret string) (TokenPayload, error) {
 	var claims claims
-	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(t *jwt.Token) (any, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		return 0, false, err
+		return TokenPayload{}, err
 	}
 
 	if !token.Valid {
-		return 0, false, fmt.Errorf("invalid token")
+		return TokenPayload{}, fmt.Errorf("invalid token")
 	}
 
-	return claims.UserID, claims.IsAdmin, nil
+	return TokenPayload{UserID: claims.UserID, IsAdmin: claims.IsAdmin}, nil
 }
