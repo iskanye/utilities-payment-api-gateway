@@ -14,7 +14,7 @@ type Config struct {
 	Billing      HostPort      `yaml:"billing"`
 	Payment      HostPort      `yaml:"payment"`
 	Memcached    HostPort      `yaml:"memcached"`
-	MemcachedTTL int           `yaml:"memcached_ttl"`
+	MemcachedTTL int           `yaml:"memcached_ttl" env-default:"0"`
 	BillingTerm  int           `yaml:"billing_term" env-default:"1"` // in Months
 }
 
