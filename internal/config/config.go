@@ -13,6 +13,7 @@ type Config struct {
 	Auth        HostPort      `yaml:"auth"`
 	Billing     HostPort      `yaml:"billing"`
 	Payment     HostPort      `yaml:"payment"`
+	Memcached   HostPort      `yaml:"memcached"`
 	BillingTerm int           `yaml:"billing_term" env-default:"1"` // in Months
 }
 
