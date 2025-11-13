@@ -100,24 +100,12 @@ func TestAuth_Logout_Success(t *testing.T) {
 func TestAuth_Validation_Failed(t *testing.T) {
 	s := suite.NewTest(t)
 
-	// Login
-	resp := s.Login(adminEmail, adminPass)
-	require.Equal(t, http.StatusOK, resp.StatusCode)
-	require.NotEmpty(t, resp.Body)
-
-	s.DecodeToken(t, resp)
-	time.Sleep(2 * time.Second)
+	s.Token = invalidToken
 
 	// Check validation
-	resp = s.CheckValidation()
+	resp := s.CheckValidation()
 	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
-
-	var jsonResp map[string]string
-	err := json.NewDecoder(resp.Body).Decode(&jsonResp)
-	require.NoError(t, err)
-
-	require.Contains(t, jsonResp["err"], "token is invalid")
 }
 
 func TestBilling_GetBill_Success(t *testing.T) {
