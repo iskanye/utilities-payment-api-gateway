@@ -83,8 +83,8 @@ func TestAuth_Logout_Success(t *testing.T) {
 	resp = s.Logout()
 	require.Equal(t, http.StatusNoContent, resp.StatusCode)
 
-	// Login after logout
-	resp = s.Login(email, pass)
+	// Action after logout
+	resp = s.GetBills()
 	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
