@@ -51,6 +51,7 @@ func New(
 	// AUTH SERVICE
 	login := handlers.LoginHandler(&auth, log)
 	register := handlers.RegisterHandler(&auth, log)
+	logout := handlers.LogoutHandler(cache, log)
 	getUsers := handlers.GetUsersHandler(&auth, log)
 
 	// BILLING SERVICE
@@ -75,6 +76,8 @@ func New(
 		authorized.GET("/bills", getBills)
 		authorized.GET("/bills/:id", getBill)
 		authorized.POST("/bills/pay", payBill)
+
+		authorized.POST("/users/logout", logout)
 	}
 
 	return &App{

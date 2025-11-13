@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/iskanye/utilities-payment-utils/pkg/logger"
 )
 
@@ -71,6 +72,34 @@ func RegisterHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{
 			"id": id,
 		})
+	}
+}
+
+// POST /users/logout
+func LogoutHandler(tokenSaver jwt.TokenSaver, log *slog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		const op = "Auth.Logout"
+
+		token := c.GetString("Token")
+
+		log := log.With(
+			slog.String("op", op),
+			slog.String("token", token),
+		)
+
+		log.Info("attempting to logout")
+
+		err := tokenSaver.Set(token)
+		if err != nil {
+			log.Error("failed to logout", logger.Err(err))
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"err": err.Error(),
+			})
+			return
+		}
+
+		log.Info("logout successfully")
+		c.Status(http.StatusNoContent)
 	}
 }
 
