@@ -6,15 +6,16 @@ import (
 )
 
 type Config struct {
-	Host        string `yaml:"host" env-default:"localhost"`
-	Port        int    `yaml:"port" env-default:"8080"`
-	AuthSecret  string
-	Timeout     time.Duration `yaml:"timeout"`
-	Auth        HostPort      `yaml:"auth"`
-	Billing     HostPort      `yaml:"billing"`
-	Payment     HostPort      `yaml:"payment"`
-	Memcached   HostPort      `yaml:"memcached"`
-	BillingTerm int           `yaml:"billing_term" env-default:"1"` // in Months
+	Host         string `yaml:"host" env-default:"localhost"`
+	Port         int    `yaml:"port" env-default:"8080"`
+	AuthSecret   string
+	Timeout      time.Duration `yaml:"timeout"`
+	Auth         HostPort      `yaml:"auth"`
+	Billing      HostPort      `yaml:"billing"`
+	Payment      HostPort      `yaml:"payment"`
+	Memcached    HostPort      `yaml:"memcached"`
+	MemcachedTTL int32         `yaml:"memcached_ttl" env-default:"3600"`
+	BillingTerm  int           `yaml:"billing_term" env-default:"1"` // in Months
 }
 
 type HostPort struct {

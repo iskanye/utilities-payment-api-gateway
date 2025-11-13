@@ -123,30 +123,14 @@ func GetBillsHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Billing.GetBills"
 
-		userIDStr := c.Request.Header.Get("UserID")
+		userID := c.GetInt64("UserID")
 
 		log := log.With(
 			slog.String("op", op),
-			slog.String("user_id", userIDStr),
+			slog.Int64("user_id", userID),
 		)
 
 		log.Info("attempting to get bills")
-
-		userID, err := strconv.ParseInt(userIDStr, 10, 64)
-		if err != nil {
-			if userIDStr == "" {
-				log.Error("user_id required", logger.Err(err))
-				c.JSON(http.StatusBadRequest, gin.H{
-					"err": err.Error(),
-				})
-				return
-			}
-			log.Error("cant convert user_id to int64", logger.Err(err))
-			c.JSON(http.StatusBadRequest, gin.H{
-				"err": err.Error(),
-			})
-			return
-		}
 
 		bills, err := b.GetBills(c, userID)
 		if err != nil {
