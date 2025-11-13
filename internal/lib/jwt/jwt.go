@@ -19,15 +19,11 @@ type TokenPayload struct {
 }
 
 type TokenSaver interface {
-	Set(val string, key TokenPayload) error
+	Set(val string) error
 }
 
 type TokenProvider interface {
-	Get(key string) (TokenPayload, error)
-}
-
-type TokenRemover interface {
-	Delete(key string) error
+	Get(key string) error
 }
 
 func ValidateToken(tokenStr string, secret string) (TokenPayload, error) {

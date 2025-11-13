@@ -6,12 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
-	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/iskanye/utilities-payment-utils/pkg/logger"
 )
 
 // POST /users/login
-func LoginHandler(a auth.Auth, log *slog.Logger, tokenSaver jwt.TokenSaver, secret string) gin.HandlerFunc {
+func LoginHandler(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Login"
 
@@ -33,18 +32,6 @@ func LoginHandler(a auth.Auth, log *slog.Logger, tokenSaver jwt.TokenSaver, secr
 			})
 			return
 		}
-
-		// Токен ОБЯЗАН быть валидным иначе сервис аутентификации неправильно работает
-		payload, err := jwt.ValidateToken(token, secret)
-		if err != nil {
-			log.Error("failed to validate token", logger.Err(err))
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"err": err.Error(),
-			})
-			return
-		}
-
-		tokenSaver.Set(token, payload)
 
 		log.Info("success")
 		c.JSON(http.StatusOK, gin.H{

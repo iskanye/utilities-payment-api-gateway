@@ -9,7 +9,6 @@ import (
 	"github.com/iskanye/utilities-payment-api-gateway/internal/cache"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
-	"github.com/iskanye/utilities-payment-utils/pkg/logger"
 )
 
 const (
@@ -21,7 +20,6 @@ func AuthMiddleware(
 	a auth.Auth,
 	log *slog.Logger,
 	tokenProvider jwt.TokenProvider,
-	tokenSaver jwt.TokenSaver,
 	secret string,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -43,35 +41,38 @@ func AuthMiddleware(
 
 		token = token[prefixLen:]
 
-		payload, err := tokenProvider.Get(token)
+		err := tokenProvider.Get(token)
 		if err == cache.ErrCacheMiss {
-			// Добавляем валидный токен в кеш если его там нет
-			log.Warn("token not in cache")
-
+			// Если токена нет в кеше значит он не заблочен
 			payload, err := jwt.ValidateToken(token, secret)
 			if err != nil {
-				log.Error("failed to validate token", logger.Err(err))
-				c.JSON(http.StatusUnauthorized, gin.H{
+				log.Warn("failed to validate")
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"err": err.Error(),
 				})
 				return
 			}
 
-			tokenSaver.Set(token, payload)
+			log.Info("validated successfully")
+
+			c.Set("Token", token)
+			c.Set("UserID", payload.UserID)
+			c.Set("IsAdmin", payload.IsAdmin)
+
+			c.Next()
+			return
 		} else if err != nil {
-			log.Error("failed to validate user", logger.Err(err))
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			log.Warn("failed to access cache")
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 				"err": err.Error(),
 			})
 			return
 		}
 
-		log.Info("validated successfully")
-
-		c.Set("UserID", payload.UserID)
-		c.Set("IsAdmin", payload.IsAdmin)
-
-		c.Next()
+		log.Warn("user logout")
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"err": "user logout",
+		})
 	}
 }
 

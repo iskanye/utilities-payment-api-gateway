@@ -45,11 +45,11 @@ func New(
 	cache := cache.New(cfg.Memcached.Host, cfg.Memcached.Port, cfg.MemcachedTTL)
 
 	// MIDDLEWARES
-	authMiddleware := middlewares.AuthMiddleware(&auth, log, cache, cache, cfg.AuthSecret)
+	authMiddleware := middlewares.AuthMiddleware(&auth, log, cache, cfg.AuthSecret)
 	adminsMiddleware := middlewares.AdminMiddleware(&auth, log)
 
 	// AUTH SERVICE
-	login := handlers.LoginHandler(&auth, log, cache, cfg.AuthSecret)
+	login := handlers.LoginHandler(&auth, log)
 	register := handlers.RegisterHandler(&auth, log)
 	getUsers := handlers.GetUsersHandler(&auth, log)
 

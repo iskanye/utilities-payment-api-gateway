@@ -1,13 +1,11 @@
 package cache
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 	"strconv"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 )
 
 type Cache struct {
@@ -24,21 +22,16 @@ func New(host string, port int, ttl int32) *Cache {
 	}
 }
 
-func (c *Cache) Set(key string, val jwt.TokenPayload) error {
+func (c *Cache) Set(key string) error {
 	const op = "memcached.Set"
-
-	value, err := json.Marshal(val)
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
 
 	item := &memcache.Item{
 		Key:        key,
-		Value:      value,
+		Value:      nil,
 		Expiration: c.ttl,
 	}
 
-	err = c.cl.Add(item)
+	err := c.cl.Add(item)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -46,30 +39,13 @@ func (c *Cache) Set(key string, val jwt.TokenPayload) error {
 	return nil
 }
 
-func (c *Cache) Get(key string) (jwt.TokenPayload, error) {
+func (c *Cache) Get(key string) error {
 	const op = "memcached.Get"
 
-	item, err := c.cl.Get(key)
+	_, err := c.cl.Get(key)
 	if err == memcache.ErrCacheMiss {
-		return jwt.TokenPayload{}, ErrCacheMiss
+		return ErrCacheMiss
 	}
-	if err != nil {
-		return jwt.TokenPayload{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	var payload jwt.TokenPayload
-	err = json.Unmarshal(item.Value, &payload)
-	if err != nil {
-		return jwt.TokenPayload{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return payload, nil
-}
-
-func (c *Cache) Delete(key string) error {
-	const op = "memcached.Delete"
-
-	err := c.cl.Delete(key)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
