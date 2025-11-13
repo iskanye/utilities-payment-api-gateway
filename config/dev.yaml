@@ -10,3 +10,6 @@ billing:
 payment:
   host: "payment"
   port: 44000
+memcached:
+  host: "cache"
+  port: 11211
