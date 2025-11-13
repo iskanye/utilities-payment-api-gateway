@@ -20,7 +20,7 @@ const (
 	adminPass  = "admin"
 	adminID    = 1
 
-	invalidToken = "NOT_VALID_TOKEN"
+	invalidToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdF9hZG1pbkBhZG1pbi5jb20iLCJleHAiOjE3NjI1MTYyNDUsImlzX2FkbWluIjpmYWxzZSwidWlkIjozfQ.w6nhM4lzgp7NbV8J7xwovZChh4ICBD4S2gGoITVlb5E"
 
 	billsN = 10
 
