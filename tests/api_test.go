@@ -89,7 +89,7 @@ func TestAuth_Logout_Success(t *testing.T) {
 	require.NotEmpty(t, resp.Body)
 
 	var jsonResp map[string]string
-	err = json.NewDecoder(resp.Body).Decode(&jsonId)
+	err = json.NewDecoder(resp.Body).Decode(&jsonResp)
 	require.NoError(t, err)
 
 	require.Contains(t, jsonResp["err"], "user logout")
