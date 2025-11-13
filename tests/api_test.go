@@ -263,16 +263,15 @@ func TestPayment_PayBill_Success(t *testing.T) {
 
 // Benchmarks
 
-func BenchmarkAuth_Login(b *testing.B) {
+func BenchmarkAuth_RegisterLogin(b *testing.B) {
 	s := suite.NewBench(b)
 
-	email := gofakeit.Email()
-	pass := randomPassword()
-
-	// Register
-	s.Register(email, pass)
-
 	for b.Loop() {
+		email := gofakeit.Email()
+		pass := randomPassword()
+
+		// Register
+		s.Register(email, pass)
 		s.Login(email, pass)
 	}
 }
