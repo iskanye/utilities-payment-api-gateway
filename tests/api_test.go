@@ -254,8 +254,11 @@ func TestPayment_PayBill_Success(t *testing.T) {
 
 	// Pay bill
 	resp = s.PayBill(billId)
-	require.NoError(t, err)
 	require.Equal(t, http.StatusNoContent, resp.StatusCode)
+
+	// Attempting to get bill
+	resp = s.GetBill(billId)
+	require.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
 // Benchmarks

@@ -107,9 +107,7 @@ func GetBillHandler(b billing.Billing, log *slog.Logger) gin.HandlerFunc {
 		bill, err := b.GetBill(c, billID)
 		if err != nil {
 			log.Error("failed to get bill", logger.Err(err))
-			c.JSON(http.StatusBadRequest, gin.H{
-				"err": err.Error(),
-			})
+			c.Status(http.StatusNotFound)
 			return
 		}
 
