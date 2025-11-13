@@ -35,7 +35,9 @@ func AuthMiddleware(
 
 		if !strings.HasPrefix(token, prefix) {
 			log.Error("failed to get user token")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"err": "no token provided",
+			})
 			return
 		}
 

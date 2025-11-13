@@ -51,7 +51,7 @@ func (s *Suite) Login(
 func (s *Suite) Logout() *http.Response {
 	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/users/login", nil)
+	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/users/logout", nil)
 	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
