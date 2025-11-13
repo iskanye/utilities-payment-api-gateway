@@ -62,7 +62,7 @@ func (s *Suite) Logout() *http.Response {
 func (s *Suite) GetUsers() *http.Response {
 	w := httptest.NewRecorder()
 
-	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/admin/bills", nil)
+	req, _ := http.NewRequestWithContext(s.ctx, "GET", "/admin/users", nil)
 	s.AddHeader(req)
 
 	s.e.ServeHTTP(w, req)
