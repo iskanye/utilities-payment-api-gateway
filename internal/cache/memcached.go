@@ -65,3 +65,14 @@ func (c *Cache) Get(key string) (jwt.TokenPayload, error) {
 
 	return payload, nil
 }
+
+func (c *Cache) Delete(key string) error {
+	const op = "memcached.Delete"
+
+	err := c.cl.Delete(key)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
