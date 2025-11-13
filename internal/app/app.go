@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/cache"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/config"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/gin/handlers"
 	grpcAuth "github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
@@ -24,6 +25,7 @@ func New(
 	log *slog.Logger,
 	cfg *config.Config,
 ) *App {
+	// GRPC CLIENTS
 	auth, err := grpcAuth.New(cfg.Auth.Host, cfg.Auth.Port)
 	if err != nil {
 		panic(err)
@@ -39,12 +41,15 @@ func New(
 		panic(err)
 	}
 
+	// CACHE
+	cache := cache.New(cfg.Memcached.Host, cfg.Memcached.Port, cfg.MemcachedTTL)
+
 	// MIDDLEWARES
-	authMiddleware := middlewares.AuthMiddleware(&auth, log, cfg.AuthSecret)
+	authMiddleware := middlewares.AuthMiddleware(&auth, log, cache, cache, cfg.AuthSecret)
 	adminsMiddleware := middlewares.AdminMiddleware(&auth, log)
 
 	// AUTH SERVICE
-	login := handlers.LoginHandler(&auth, log)
+	login := handlers.LoginHandler(&auth, log, cache, cfg.AuthSecret)
 	register := handlers.RegisterHandler(&auth, log)
 	getUsers := handlers.GetUsersHandler(&auth, log)
 
