@@ -26,6 +26,10 @@ type TokenProvider interface {
 	Get(key string) (TokenPayload, error)
 }
 
+type TokenRemover interface {
+	Delete(key string) error
+}
+
 func ValidateToken(tokenStr string, secret string) (TokenPayload, error) {
 	var claims claims
 	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(t *jwt.Token) (any, error) {

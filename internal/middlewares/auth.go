@@ -1,12 +1,12 @@
 package middlewares
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/iskanye/utilities-payment-api-gateway/internal/cache"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/grpc/auth"
 	"github.com/iskanye/utilities-payment-api-gateway/internal/lib/jwt"
 	"github.com/iskanye/utilities-payment-utils/pkg/logger"
@@ -17,7 +17,13 @@ const (
 	prefixLen = 7
 )
 
-func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFunc {
+func AuthMiddleware(
+	a auth.Auth,
+	log *slog.Logger,
+	tokenProvider jwt.TokenProvider,
+	tokenSaver jwt.TokenSaver,
+	secret string,
+) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		const op = "Auth.Validation"
 
@@ -37,8 +43,22 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 
 		token = token[prefixLen:]
 
-		payload, err := jwt.ValidateToken(token, secret)
-		if err != nil {
+		payload, err := tokenProvider.Get(token)
+		if err == cache.ErrCacheMiss {
+			// Добавляем валидный токен в кеш если его там нет
+			log.Warn("token not in cache")
+
+			payload, err := jwt.ValidateToken(token, secret)
+			if err != nil {
+				log.Error("failed to validate token", logger.Err(err))
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"err": err.Error(),
+				})
+				return
+			}
+
+			tokenSaver.Set(token, payload)
+		} else if err != nil {
 			log.Error("failed to validate user", logger.Err(err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"err": err.Error(),
@@ -47,10 +67,9 @@ func AuthMiddleware(a auth.Auth, log *slog.Logger, secret string) gin.HandlerFun
 		}
 
 		log.Info("validated successfully")
-		c.Request.Header.Add("UserID", fmt.Sprint(payload.UserID))
-		if payload.IsAdmin {
-			c.Request.Header.Add("Admin", "1")
-		}
+
+		c.Set("UserID", payload.UserID)
+		c.Set("IsAdmin", payload.IsAdmin)
 
 		c.Next()
 	}
@@ -66,7 +85,7 @@ func AdminMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 
 		log.Info("attempting to check users permissions")
 
-		isAdmin := c.Request.Header.Get("Admin") != ""
+		isAdmin := c.GetBool("IsAdmin")
 
 		if !isAdmin {
 			log.Warn("user is not admin")
