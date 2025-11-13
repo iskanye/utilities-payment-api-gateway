@@ -20,6 +20,8 @@ const (
 	adminPass  = "admin"
 	adminID    = 1
 
+	invalidToken = "NOT_VALID_TOKEN"
+
 	billsN = 10
 
 	deltaDay = 86400
@@ -84,7 +86,7 @@ func TestAuth_Logout_Success(t *testing.T) {
 	require.Equal(t, http.StatusNoContent, resp.StatusCode)
 
 	// Action after logout
-	resp = s.GetBills()
+	resp = s.CheckValidation()
 	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
@@ -93,6 +95,23 @@ func TestAuth_Logout_Success(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Contains(t, jsonResp["err"], "user logout")
+}
+
+func TestAuth_Validation_Failed(t *testing.T) {
+	s := suite.NewTest(t)
+
+	s.Token = invalidToken
+
+	// Check validation
+	resp := s.CheckValidation()
+	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var jsonResp map[string]string
+	err := json.NewDecoder(resp.Body).Decode(&jsonResp)
+	require.NoError(t, err)
+
+	require.Contains(t, jsonResp["err"], "token is invalid")
 }
 
 func TestBilling_GetBill_Success(t *testing.T) {

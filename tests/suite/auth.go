@@ -88,14 +88,14 @@ func (s *Suite) DecodeToken(
 	err := json.NewDecoder(r.Body).Decode(&jsonToken)
 	require.NoError(t, err)
 
-	s.token = jsonToken["token"]
+	s.Token = jsonToken["token"]
 
-	payload, err := jwt.ValidateToken(s.token, s.Cfg.AuthSecret)
+	payload, err := jwt.ValidateToken(s.Token, s.Cfg.AuthSecret)
 	require.NoError(t, err)
 
 	return payload.UserID, payload.IsAdmin
 }
 
 func (s *Suite) AddHeader(req *http.Request) {
-	req.Header.Set("Authorization", "Bearer "+s.token)
+	req.Header.Set("Authorization", "Bearer "+s.Token)
 }

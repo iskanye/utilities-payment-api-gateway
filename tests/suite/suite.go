@@ -14,12 +14,11 @@ import (
 )
 
 type Suite struct {
-	Cfg *config.Config
+	Cfg   *config.Config
+	Token string
 
 	e   *gin.Engine
 	ctx context.Context
-
-	token string
 }
 
 func NewTest(t *testing.T) *Suite {
