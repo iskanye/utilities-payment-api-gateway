@@ -14,8 +14,7 @@ import (
 )
 
 type Suite struct {
-	Cfg    *config.Config
-	UserID int64
+	Cfg *config.Config
 
 	e   *gin.Engine
 	ctx context.Context

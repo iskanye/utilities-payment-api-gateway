@@ -2,7 +2,6 @@ package suite
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -94,11 +93,9 @@ func (s *Suite) DecodeToken(
 	payload, err := jwt.ValidateToken(s.token, s.Cfg.AuthSecret)
 	require.NoError(t, err)
 
-	s.UserID = payload.UserID
-	return s.UserID, payload.IsAdmin
+	return payload.UserID, payload.IsAdmin
 }
 
 func (s *Suite) AddHeader(req *http.Request) {
 	req.Header.Set("Authorization", "Bearer "+s.token)
-	req.Header.Set("UserID", fmt.Sprint(s.UserID))
 }
