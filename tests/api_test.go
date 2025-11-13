@@ -309,6 +309,30 @@ func BenchmarkBilling_GetBills(b *testing.B) {
 	}
 }
 
+func BenchmarkPayment_PayBill(b *testing.B) {
+	s := suite.NewBench(b)
+
+	// Login
+	resp := s.Login(adminEmail, adminPass)
+	s.DecodeToken(b, resp)
+
+	// Create bill
+	address := gofakeit.Address().Address
+	amount := gofakeit.Number(100, 100000)
+	userID := int64(gofakeit.Number(1, 100000))
+
+	for b.Loop() {
+		resp := s.AddBill(address, amount, userID)
+
+		var jsonID map[string]int64
+		json.NewDecoder(resp.Body).Decode(&jsonID)
+
+		s.PayBill(jsonID["id"])
+
+		resp.Body.Close()
+	}
+}
+
 func randomPassword() string {
 	return gofakeit.Password(true, true, true, true, false, passwordLen)
 }
