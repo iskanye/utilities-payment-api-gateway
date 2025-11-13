@@ -1,11 +1,16 @@
+host: "gateway"
 port: 8080
-timeout: 10h
+timeout: 5s
 auth:
+  host: "auth"
   port: 44044
 billing:
+  host: "billing"
   port: 44080
 payment:
+  host: "payment"
   port: 44000
 memcached:
+  host: "cache"
   port: 11211
 billing_term: 1
