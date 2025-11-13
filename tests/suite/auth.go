@@ -48,6 +48,17 @@ func (s *Suite) Login(
 	return w.Result()
 }
 
+func (s *Suite) Logout() *http.Response {
+	w := httptest.NewRecorder()
+
+	req, _ := http.NewRequestWithContext(s.ctx, "POST", "/users/login", nil)
+	s.AddHeader(req)
+
+	s.e.ServeHTTP(w, req)
+
+	return w.Result()
+}
+
 func (s *Suite) GetUsers() *http.Response {
 	w := httptest.NewRecorder()
 
