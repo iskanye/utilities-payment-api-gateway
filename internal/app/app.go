@@ -3,6 +3,7 @@ package app
 import (
 	"log/slog"
 	"net"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -78,6 +79,8 @@ func New(
 		authorized.POST("/bills/pay", payBill)
 
 		authorized.POST("/users/logout", logout)
+
+		authorized.GET("/ping", ping)
 	}
 
 	return &App{
@@ -94,4 +97,11 @@ func (a *App) MustRun() {
 
 func address(host string, port int) string {
 	return net.JoinHostPort(host, strconv.Itoa(port))
+}
+
+// For testing validation
+func ping(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"pong": "",
+	})
 }

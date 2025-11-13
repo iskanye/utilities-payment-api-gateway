@@ -277,6 +277,18 @@ func BenchmarkAuth_Login(b *testing.B) {
 	}
 }
 
+func BenchmarkAuth_Validation(b *testing.B) {
+	s := suite.NewBench(b)
+
+	// Login
+	resp := s.Login(adminEmail, adminPass)
+	s.DecodeToken(b, resp)
+
+	for b.Loop() {
+		s.CheckValidation()
+	}
+}
+
 func BenchmarkAuth_GetUsers(b *testing.B) {
 	s := suite.NewBench(b)
 
