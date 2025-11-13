@@ -53,6 +53,48 @@ func TestAuth_RegisterLogin_Success(t *testing.T) {
 	assert.False(t, isAdmin)
 }
 
+func TestAuth_Logout_Success(t *testing.T) {
+	s := suite.NewTest(t)
+	email := gofakeit.Email()
+	pass := randomPassword()
+
+	// Register
+	resp := s.Register(email, pass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	var jsonId map[string]int64
+	err := json.NewDecoder(resp.Body).Decode(&jsonId)
+	require.NoError(t, err)
+
+	id := jsonId["id"]
+	assert.NotEmpty(t, id)
+
+	// Login
+	resp = s.Login(email, pass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	tokenId, isAdmin := s.DecodeToken(t, resp)
+
+	require.NoError(t, err)
+	assert.Equal(t, tokenId, id)
+	assert.False(t, isAdmin)
+
+	// Logout
+	resp = s.Logout()
+	require.Equal(t, http.StatusNoContent, resp.StatusCode)
+
+	// Login after logout
+	resp = s.Login(email, pass)
+	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	var jsonResp map[string]string
+	err = json.NewDecoder(resp.Body).Decode(&jsonId)
+	require.NoError(t, err)
+
+	require.Contains(t, jsonResp["err"], "user logout")
+}
+
 func TestBilling_GetBill_Success(t *testing.T) {
 	s := suite.NewTest(t)
 

@@ -6,4 +6,6 @@ billing:
   port: 44080
 payment:
   port: 44000
+memcached:
+  port: 11211
 billing_term: 1
