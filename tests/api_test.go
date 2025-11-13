@@ -100,10 +100,16 @@ func TestAuth_Logout_Success(t *testing.T) {
 func TestAuth_Validation_Failed(t *testing.T) {
 	s := suite.NewTest(t)
 
-	s.Token = invalidToken
+	// Login
+	resp := s.Login(adminEmail, adminPass)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.NotEmpty(t, resp.Body)
+
+	s.DecodeToken(t, resp)
+	time.Sleep(2 * time.Second)
 
 	// Check validation
-	resp := s.CheckValidation()
+	resp = s.CheckValidation()
 	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 	require.NotEmpty(t, resp.Body)
 
