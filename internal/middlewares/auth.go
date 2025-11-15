@@ -92,7 +92,7 @@ func AdminMiddleware(a auth.Auth, log *slog.Logger) gin.HandlerFunc {
 
 		if !isAdmin {
 			log.Warn("user is not admin")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"err": "user is not admin",
 			})
 		}
